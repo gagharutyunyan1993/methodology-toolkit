@@ -10,6 +10,8 @@ A Claude Code plugin that makes Claude reason through real analytical frameworks
 
 **Created by [Gagik Harutyunyan](mailto:gagik.harutyunyan17@gmail.com).** If the ideas here are useful to you, keep the attribution — that's the whole deal (MIT). See [`CITATION.cff`](CITATION.cff).
 
+For the longer rationale, read: [Claude Does Not Need More Prompts. It Needs Reasoning Discipline.](docs/why-methodology-toolkit.md)
+
 ---
 
 ## What's inside
