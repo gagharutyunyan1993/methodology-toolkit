@@ -66,6 +66,27 @@ Two failure modes this plugin is built to prevent:
 
 Prompts are tuned for **Claude Opus 4.8** specifics: instruction scope is stated per-method (4.8 reads literally and won't generalize across methods), subagent spawning is deliberate (4.8 spawns fewer by default), and the costly independent red-team pass is *offered*, not run silently, when the user is in the loop.
 
+## Why this is not just a prompt collection
+
+The goal is not to make Claude _sound_ more strategic. The goal is to make it harder for Claude to skip the parts of analysis where mistakes usually hide:
+
+- **Method selection is gated by problem type.** Cynefin runs first so a simple syntax question does not get buried under frameworks, while uncertain or adversarial decisions get methods that match the situation.
+- **Every invoked method must be applied step by step.** If the answer says "using ACH" or "using OODA", the output must show the ACH matrix or the Observe/Orient/Decide/Act pass. Labels alone are treated as failure.
+- **Load-bearing facts must be verified before conclusion.** The toolkit pushes Claude toward primary evidence: code read, commands run, tests checked, git history inspected.
+- **The critique path is separate.** `red-team-critic` runs as an adversarial reviewer with its own context, so the stress test is less likely to rationalize the first answer.
+
+### Example: architecture decision
+
+**Without the toolkit:** Claude may recommend "migrate polling to WebSocket" because it sounds technically cleaner, then list generic pros and cons.
+
+**With the toolkit:** Claude classifies the decision as complicated/complex, applies First Principles to identify what actually needs real-time delivery, uses ACH to compare polling, SSE, and WebSocket against disconfirming evidence, then runs a pre-mortem. The likely outcome is a narrower recommendation: WebSocket only if bidirectional low-latency updates are required; otherwise SSE or tuned polling may be cheaper and safer.
+
+### Example: codebase diagnosis
+
+**Without the toolkit:** Claude may infer the root cause from one symptom and patch the nearest visible file.
+
+**With the toolkit:** Claude uses 5 Whys only while the causal chain stays mechanical, promotes assumptions through the Quality of Information Check, reads the relevant files, greps for callers, and runs the targeted test. If the evidence contradicts the first theory, the conclusion changes before a patch is made.
+
 ## The 29 methods
 
 Cynefin · OODA · PDCA · First Principles · 5 Whys · 5 Forces (Porter) · ADKAR · Kotter · Eisenhower · GTD · SMEAC · Schwerpunkt · Mental Models · System 1/2 · JTBD · Double Diamond · Theory of Constraints · OKR · Minto Pyramid · SCQA · BATNA · Thomas-Kilmann · ACH · Red Team · Pre-mortem · PMESII · SWOT/TOWS · SAT · Quality of Information Check.
