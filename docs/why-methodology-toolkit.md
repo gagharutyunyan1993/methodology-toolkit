@@ -22,6 +22,8 @@ claims, and stress-test plans before they harden into action.
 
 Repository: <https://github.com/gagharutyunyan1993/methodology-toolkit>
 
+![A cat insisting on method over vibes](https://cataas.com/cat/says/Method,%20not%20vibes?fontSize=50&fontColor=white&width=600)
+
 ## The Problem: Methodology Theater
 
 Methodologies are useful because they constrain attention.
@@ -45,6 +47,10 @@ creates false confidence.
 > If a method is named, its steps must be walked.
 
 Not hinted at. Not summarized. Applied.
+
+![A smug cat that merely named the method](https://cataas.com/cat/says/I%20named%20OODA.%20Done.?fontSize=44&fontColor=white&width=600)
+
+*Methodology theater: right vocabulary, no method actually in control.*
 
 ## The Second Problem: Confident Wrongness
 
@@ -76,6 +82,10 @@ Primary evidence means things like:
 
 Docs, comments, and memory can be useful, but they are not the final authority
 when the code or command output says otherwise.
+
+![A cat citing only itself as the source](https://cataas.com/cat/says/Source:%20trust%20me?fontSize=50&fontColor=white&width=600)
+
+*A polished argument with unverified premises is still fragile.*
 
 ## What the Plugin Actually Adds
 
@@ -132,6 +142,8 @@ Some problems are chaotic: the first job is stabilization, not analysis.
 That is why the skill uses Cynefin first. It prevents the plugin from becoming a
 framework machine that turns every question into a workshop.
 
+![A cat classifying the problem before acting](https://cataas.com/cat/says/Cynefin%20first?fontSize=50&fontColor=white&width=600)
+
 ## Design Choice 2: Apply Methods Explicitly
 
 The toolkit has a hard rule:
@@ -169,6 +181,10 @@ This is intentionally not run silently for every task. Independent critique has
 a cost. The toolkit encourages it when decisions are hard to reverse, touch
 money, auth, data integrity, security, or when the first answer was not grounded
 in verified evidence.
+
+![A grumpy red-team cat predicting failure](https://cataas.com/cat/says/Your%20plan%20will%20fail?fontSize=46&fontColor=white&width=600)
+
+*The `red-team-critic` does not balance the positives. That is the point.*
 
 ## Example: Architecture Decision
 
@@ -226,6 +242,8 @@ The Quality of Information Check matters here. The agent should read the
 component, grep the callers, inspect the API mapper, and run the relevant test
 before deciding where the fix belongs.
 
+![A cat demanding you run the grep before guessing](https://cataas.com/cat/says/Run%20the%20grep%20first?fontSize=48&fontColor=white&width=600)
+
 ## What This Does Not Solve
 
 This plugin does not make AI reasoning magically correct.
@@ -270,3 +288,5 @@ Then ask a non-trivial question, or invoke the method command directly:
 The point is not to make Claude sound like a consultant.
 
 The point is to make its decisions easier to inspect, challenge, and correct.
+
+![A cat telling you to just install it already](https://cataas.com/cat/says/Just%20install%20it?fontSize=50&fontColor=white&width=600)
