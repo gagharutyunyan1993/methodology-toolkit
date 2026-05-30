@@ -1,0 +1,16 @@
+{
+  "name": "methodology-toolkit",
+  "description": "Structured decision-making for Claude Code: /method command, methodology-driven-thinking skill, and red-team-critic subagent over a shared 29-method index.",
+  "owner": {
+    "name": "Gagik Harutyunyan",
+    "email": "gagik.harutyunyan17@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "methodology-toolkit",
+      "source": "./plugins/methodology-toolkit",
+      "description": "Structured decision-making: /method command + methodology-driven-thinking skill + red-team-critic subagent. 29 analytical frameworks applied explicitly.",
+      "version": "1.0.0"
+    }
+  ]
+}
