@@ -59,6 +59,13 @@ claude --plugin-dir /path/to/methodology-toolkit/plugins/methodology-toolkit
 
 Or just ask a hard question — the skill triggers itself. For an independent teardown of a plan, invoke the `red-team-critic` subagent.
 
+## Examples
+
+- [Polling vs SSE vs WebSocket](examples/websocket-decision.md) — architecture decision under uncertainty.
+- [Codebase diagnosis without guessing](examples/codebase-diagnosis.md) — bug-fix workflow grounded in primary evidence.
+
+For external launch copy, see [Launch Posts](docs/launch-posts.md).
+
 ## Design philosophy
 
 Two failure modes this plugin is built to prevent:
