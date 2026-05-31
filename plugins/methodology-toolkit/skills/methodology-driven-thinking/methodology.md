@@ -728,20 +728,3 @@ When multiple candidates appear plausible, use these distinctions to pick the ri
 **Output:** A conclusion where every load-bearing fact is verified at Primary level, not asserted from docs, memory, or partial evidence.
 
 **Used as:** the engineering **Evidence gate** in `SKILL.md` Step 2.5 — that gate _is_ this card applied at the door to code claims before any method consumes them. It remains one method in this index, not a separate subsystem: the gate validates inputs; the conclusion is still produced by the methods downstream (5 Whys, ACH, First Principles). Delete the other methods and this card alone tells you a fact is trustworthy, not what it means.
-
----
-
-## Maintenance
-
-Every 3–4 weeks, review recent methodology-driven sessions and ask:
-
-- **Which methods were selected repeatedly?** → Candidates for `core` tier.
-- **Which methods were never used?** → Candidates for removal, merge, or `manual-only` (accessible only via `/methodology-toolkit:method`).
-- **Which selections felt wrong, forced, or overloaded?** → Disambiguation rules need refinement.
-- **Which overlap rules failed?** → The disambiguation block needs a new entry or a sharper distinction.
-- **Which missing method would have improved the result?** → Candidate for addition (verify it doesn't duplicate an existing method first).
-- **Where did the agent name a method without actually applying it?** → SKILL.md anti-pattern guard needs strengthening.
-
-Output of each review: concrete edits to this file or to `SKILL.md`. If a review produces no edits, that's also a valid result — note it and re-check next cycle.
-
-The review is the only feedback loop this library has. Skipping it means the library reflects taste rather than reality.
