@@ -727,6 +727,8 @@ When multiple candidates appear plausible, use these distinctions to pick the ri
 
 **Output:** A conclusion where every load-bearing fact is verified at Primary level, not asserted from docs, memory, or partial evidence.
 
+**Used as:** the engineering **Evidence gate** in `SKILL.md` Step 2.5 — that gate _is_ this card applied at the door to code claims before any method consumes them. It remains one method in this index, not a separate subsystem: the gate validates inputs; the conclusion is still produced by the methods downstream (5 Whys, ACH, First Principles). Delete the other methods and this card alone tells you a fact is trustworthy, not what it means.
+
 ---
 
 ## Maintenance

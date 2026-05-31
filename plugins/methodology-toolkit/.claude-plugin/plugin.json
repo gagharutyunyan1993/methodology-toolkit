@@ -1,7 +1,7 @@
 {
   "name": "methodology-toolkit",
   "description": "Structured decision-making for Claude Code: a /method command, an auto-triggering methodology-driven-thinking skill, and a red-team-critic subagent. 29 analytical frameworks (Cynefin, First Principles, OODA, ACH, Pre-mortem, Red Team, BATNA, JTBD, Theory of Constraints, ...) applied explicitly — not nominally.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "Gagik Harutyunyan",
     "email": "gagik.harutyunyan17@gmail.com"

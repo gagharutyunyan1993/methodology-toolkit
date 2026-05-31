@@ -1,6 +1,6 @@
 ---
 name: methodology-driven-thinking
-description: Apply structured decision-making and analytical frameworks to non-trivial problems. Use when the user asks for research, strategy, diagnosis, architecture decisions, prioritization, tradeoff analysis, root cause analysis, planning under uncertainty, problem-solving approach, or "how should I approach X". Selects 1-3 relevant methodologies from a curated index (Cynefin, First Principles, OODA, ACH, BATNA, JTBD, Theory of Constraints, etc.), applies them explicitly, and synthesizes a concrete answer.
+description: Apply structured decision-making and analytical frameworks to non-trivial problems. Use when the user asks for research, strategy, diagnosis, architecture decisions, prioritization, tradeoff analysis, root cause analysis, planning under uncertainty, problem-solving approach, "how should I approach X", or for engineering tasks that rest on load-bearing claims about code (bug, regression, code review, refactor, failing test, architecture claim). Selects 1-3 relevant methodologies from a curated index (Cynefin, First Principles, OODA, ACH, BATNA, JTBD, Theory of Constraints, etc.), applies them explicitly, and synthesizes a concrete answer.
 ---
 
 # Methodology-Driven Thinking
@@ -23,6 +23,24 @@ Before selecting any other methodology, place the problem in a Cynefin domain:
 - **Chaotic** — no clear cause-effect. → Act first to stabilize, then re-classify.
 
 State the classification in one line. If you can't classify, that itself is a signal — say so.
+
+### Step 2.5 — Evidence gate (load-bearing code claims)
+
+This step runs **after** the Clear/Simple exit and **before** method selection — trivial tasks never reach it. If the task survived Step 2 **and** rests on a load-bearing claim about code — what a function returns, where a defect lives, what a command does, what the backend sends — gate the claim before any method consumes it:
+
+1. Name the claim explicitly: "This conclusion depends on X being true."
+2. Tag its current source tier — **Primary** (code you read, command output, git, test results), **Secondary** (`.d.ts`, prose docs, comments — subject to drift), or **Inferred** (memory, assumption, analogy).
+3. Promote every load-bearing claim to **Primary** before it enters a method: run the command, read the file, check git. A claim that stays Secondary/Inferred is a hypothesis, not an input.
+
+This is **Quality of Information Check** applied at the door (see its card in the index). The gate validates the *inputs* only — it does **not** produce the conclusion. "Claim verified" is not an answer; deciding _why_ the fact holds, _where_ the defect is, and _what_ the fix should be is still the methods' job (5 Whys, ACH, First Principles). If the task carries no code claim (pure strategy, planning, communication), skip the gate and go to Step 3.
+
+<example>
+Gate fires (code claim): "The page crashes because `profile` can be null." Tier: **Inferred** — assumed from the stack-trace shape. Promote: read the API client and run the failing test → the endpoint returns 204 with an empty body, so `profile` really is null at runtime. Now **Primary**. → Hand off to 5 Whys / ACH to find _why_ the body is empty and _where_ the fix belongs. The gate proved the fact is real; it did not choose the fix.
+</example>
+
+<example>
+Gate skipped (no code claim): "Should we enter the EU market before or after the Series A?" Nothing here rests on a verifiable fact about code — the inputs are strategic judgements, not file contents or command output. Do **not** run the evidence gate; go straight to Step 3 and select methods (e.g. BATNA, Pre-mortem, Porter). Forcing a code-evidence gate onto a pure-strategy task is exactly the theater the Clear/Simple off-ramp exists to prevent.
+</example>
 
 ### Step 3 — Select 1–3 methodologies
 
@@ -69,6 +87,7 @@ Where do the chosen methods agree? Where do they diverge? Give the user an actio
 - **5 Whys weakens past 2–3 levels on human/political problems.** Switch to ACH or Cynefin if you find yourself inventing motives.
 - **ADKAR is an org-change tool**, not a self-coaching tool. Don't apply to single personal decisions.
 - **"Not a regression" is not an acceptance criterion.** When Pre-mortem or Red Team surfaces a real defect, the default is to fix it — not to rationalize it. Comparing to prior broken behavior ("the original also had this", "no worse than before", "same as legacy") legitimizes shipping a known bug under methodological cover. The valid question is "what does correct look like?" — answered via First Principles — not "is this worse than current?". A defect inherited from the old code is still a defect.
+- **No code claim without primary evidence.** On engineering tasks the Evidence gate (Step 2.5) is not optional — promote every load-bearing code claim to Primary before a method consumes it. The gate rejects unverified inputs; it does not replace the methods that turn a verified fact into a decision. (Mechanics in the next rule.)
 - **Verify load-bearing claims before asserting them, not after.** When a conclusion rests on a specific fact — file content, a grep result, what a doc says, what a command will do — run the check _first_. Partial evidence (one file, one grep, prose in a `.md` doc or a `.d.ts`) is a hypothesis, not a conclusion: state it as "I need to verify X", verify, then conclude. A claim baked into an ACH evidence row or a First Principles base fact must be a _checked_ fact, or the method is corrupted. Primary sources (code you read, command output, git history, test results) outrank secondary ones (docs, comments, generated `.d.ts`) — see **Quality of Information Check** in the index.
 
 ## Double-pass pattern

@@ -10,7 +10,7 @@
       "name": "methodology-toolkit",
       "source": "./plugins/methodology-toolkit",
       "description": "Structured decision-making: /method command + methodology-driven-thinking skill + red-team-critic subagent. 29 analytical frameworks applied explicitly.",
-      "version": "1.0.0"
+      "version": "1.1.0"
     }
   ]
 }
