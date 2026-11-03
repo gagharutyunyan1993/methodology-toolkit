@@ -105,7 +105,7 @@ When multiple candidates appear plausible, use these distinctions to pick the ri
 1. **Observe** — gather raw situation data without interpreting.
 2. **Orient** — interpret through experience, context, and biases. _The load-bearing step._ Surface what assumptions you're carrying in. Most failures live here.
 3. **Decide** — choose a course of action.
-4. **Act** — execute, then return to Observe with new data.
+4. **Act** — execute, then return to Observe with new data. If executing is outside what the user authorised or what your tools allow, the action is `[planned]` (or `[blocked]`, with why) — never describe it as done.
 
 **Output:** Iteration cycles that compound faster than the adversary's, forcing them to react to a stale model of reality.
 
@@ -124,8 +124,8 @@ When multiple candidates appear plausible, use these distinctions to pick the ri
 **Steps:**
 
 1. **Plan** — design the change and define explicit success criteria.
-2. **Do** — execute at small scale.
-3. **Check** — compare results to the criteria honestly.
+2. **Do** — execute at small scale. In an analysis you cannot or may not execute, Do is a `[planned]` step with its scope, not a performed one.
+3. **Check** — compare results to the criteria honestly. Without real results, Check is the planned comparison and its pass/fail criterion — not a verdict.
 4. **Act** — adopt, adapt, or abandon. Then loop.
 
 **Output:** A sustained improvement curve, not a one-time fix.
@@ -260,13 +260,13 @@ When multiple candidates appear plausible, use these distinctions to pick the ri
 
 **Steps:**
 
-1. State the problem concretely.
-2. Ask "why did this happen?" — answer with a concrete cause, not a feeling.
+1. State the problem concretely. This is the question the chain must answer — do not swap it for an easier one halfway down.
+2. Ask "why did this happen?" — answer with a concrete cause and the evidence that shows it (file:line, log line, command output, document). A cause with no evidence is a `[hypothesis]`, not a link.
 3. Take that cause as the new problem. Ask why again.
-4. Repeat ~5 times until you hit a cause you can actually act on.
-5. Validate: if you fixed the root cause, would the symptom go away?
+4. Repeat (up to ~5) while each link is supported. **Stop the established chain at the last supported link (N).** Below N, list the competing hypotheses and the check that would tell them apart — do not keep descending on guesses.
+5. Validate: if you fixed the cause at N, would the symptom go away? If N is not deep enough to act on, say the root cause is undetermined and name the evidence that would determine it.
 
-**Output:** A causal chain that distinguishes proximate from root cause, with an actionable intervention point.
+**Output:** A causal chain established to link N with its evidence, plus labelled hypotheses below N and the discriminating check. "Root cause undetermined from the available data" is a valid output; a different problem's root cause presented as this one's is not.
 
 ---
 
@@ -810,27 +810,34 @@ When multiple candidates appear plausible, use these distinctions to pick the ri
 
 **Origin:** US Intelligence Community (a SAT technique), elevated here to a standalone card
 **Category:** Evidence quality / epistemic discipline
-**Cynefin fit:** All — applies whenever a conclusion rests on facts
+**Cynefin fit:** All — factual verification is independent of how complex the problem is
 
-**Use when:** A decision or analysis depends on specific claims — what a file contains, what a doc says, what a command will do, what the backend returns, what a competitor charges, how many buyers exist, what users actually do. Run it _before_ treating any claim as load-bearing.
+**Use when:** A conclusion, risk call or next action depends on a checkable claim — what a file contains, what a command returns, what the backend sends, what a document or contract promises, what a competitor charges, how many buyers exist, what users actually did. Also for claims a method introduces mid-analysis.
 
-**Avoid when:** Never skip on high-stakes conclusions. Only skippable for a fact you just observed at primary level moments ago.
+**Avoid when:** No checkable premise could change the answer (pure judgement about people, timing, preference), or the claim was just observed directly and still applies — reuse it rather than re-checking.
 
 **Steps:**
 
-1. List each fact the conclusion depends on.
-2. Tag each fact by source-reliability tier (most reliable first), using the column for its domain:
+1. **List the claims whose reversal would change the answer.** Separate what was _observed_ from what is _inferred_, _assumed_ (`[hypothesis]`) or _predicted_.
+2. **Tag provenance** — where the evidence comes from, using the column for its domain. Provenance describes the source; it is **not** a truth ranking.
 
-   | Tier          | Code / systems                                                     | Product / market (external)                                                                                                                                                                                                     |
-   | ------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-   | **Primary**   | Command output, code you just read, git history, test results.     | The entity's own source, opened this session (pricing page, docs, changelog, terms, app-store listing, filings, official statistics); the user's own data (analytics, payments, support tickets, interview notes).              |
-   | **Secondary** | `.d.ts`, prose docs, CLAUDE.md, code comments. All subject to drift. | Third-party coverage: analyst reports, press, review sites, comparison blogs, search-result snippets, AI-generated summaries. Also an entity's claims about its own performance or adoption ("10,000 teams use us", "cuts reporting time by 40%") — tagged **self-reported**: the page is first-party, but nothing checks the number. Its own terms (prices, plan limits, features) are Primary, not self-reported. |
-   | **Inferred**  | Memory, assumption, "it's probably like X", analogy to another codebase. | Training-data memory ("as I recall they charge $X"), analogy to another market, extrapolation from one anecdote.                                                                                                                 |
+   | Tier          | Code / systems                                                     | Product / market (external)                                                                                                                                       |
+   | ------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+   | **Primary**   | Command output, code you just read, git history, test results.     | The entity's own source for its own terms (pricing page, docs, changelog, terms, filings, official statistics); the user's own data (analytics, payments, tickets, interview notes). |
+   | **Secondary** | Prose docs, `.d.ts`, comments, project-instruction files — they describe the code and drift from it. | Third-party coverage (analysts, press, reviews, comparison blogs, search snippets, AI summaries); an entity's claims about its own performance or adoption, tagged **self-reported**. |
+   | **Inferred**  | Memory, assumption, analogy to another codebase.                   | Training-data memory, analogy to another market, extrapolation from one anecdote.                                                                                  |
 
-3. **Date every external fact.** Record the page date or, failing that, the date you accessed it. Prices, plans, feature sets, and headcounts decay in months; an undated product fact is Inferred regardless of where it came from.
-4. For any load-bearing fact resting on Secondary or Inferred, **promote it**: run the command, read the file, check git — or open the entity's own page, find the filing, read the user's data — and convert it to Primary before relying on it. If it cannot be promoted (no web access, paywalled, not published), keep it in the analysis **labelled** as unverified; never restate it as fact.
-5. If a Secondary source conflicts with a Primary source, the Primary wins; flag the Secondary as stale. If two Primary sources conflict (e.g. pricing page vs. docs), report both with dates rather than picking one.
+   A source locator can be a URL, a file plus line, a passage the user supplied, or a tool result. "Inferred" describes the claim, not the availability of web tools: a document or export the user gave you keeps its provenance with the network off.
+3. **Check support for the exact claim**, not just the source's standing. A tool result shows what was returned; a quote checked against its page shows what that page says. Reading code or a passing test establishes only the properties they actually cover — inspect what the test asserts. `NOT FOUND` is not proof of absence.
+4. **Hypotheses are allowed; laundering them is not.** Methods may run on `[hypothesis]` premises (ACH, Pre-mortem, Assumption Mapping, the branches below a 5 Whys chain) — that is how you decide what to check next. Keep the label wherever the conclusion depends on it. A conditional conclusion is fine when it states its assumptions, how sensitive the decision is to them, and the check that would settle them. An unverified decisive premise never supports an unconditional factual conclusion.
+5. **Resolve conflicts by domain — there is no automatic winner.**
+   - _Code, actual behaviour:_ match build, configuration, inputs and execution path. A relevant execution observation outweighs conflicting prose **for the observed case**; docs or comments that disagree with running code are flagged as stale for that case.
+   - _Code, intended behaviour:_ a specification or contract is independent normative evidence. Code that disagrees with it may be the defect — implementation does not redefine the promise.
+   - _Product / market:_ match entity, plan, region, billing basis, effective period and population. Report conflicting sources with their dates; a newer date or a first-party source does not win by itself.
+6. **Freshness is separate from provenance.** Record the page's own date and the access date for every external fact. For prices, plans and limits, a page date older than 12 months, or none, triggers a currency check. "The page shows X now" and "X applies to this user now" are different claims; while current applicability is unresolved, confidence in it is at most Medium. A second source helps only if it closes that gap — a copy of the same stale number does not.
+7. **Rate two confidences, one reason each:** _observation_ confidence (directness, scope match, freshness, unresolved conflicts) and _conclusion_ confidence (premises plus the validity of the inference, alternatives considered, sensitivity). High conclusion confidence never follows from provenance or source count alone.
+8. **Promote or label.** For every load-bearing claim resting on Secondary or Inferred, try to promote it (run the read-only check, read the file, open the owner's page, read the user's data). If it cannot be promoted, keep it labelled as unverified — never restate it as fact.
 
-**Output:** A conclusion where every load-bearing fact is verified at Primary level — and, for external facts, sourced and dated — not asserted from docs, memory, or partial evidence.
+**Output:** A claim-to-evidence map with observation and conclusion confidence kept apart, unresolved conflicts shown with their dates, and honest status for every external step (`[performed]` / `[planned]` / `[blocked]`).
 
-**Used as:** the **Evidence gate** in `SKILL.md` Step 2.5 — that gate _is_ this card applied at the door to code claims and to product/market claims before any method consumes them. It remains one method in this index, not a separate subsystem: the gate validates inputs; the conclusion is still produced by the methods downstream (5 Whys, ACH, First Principles). Delete the other methods and this card alone tells you a fact is trustworthy, not what it means.
+**Used as:** the **Evidence gate** in `SKILL.md` Step 2.5 and Research mode R4 — applied at the door to code and product/market claims, and again to new load-bearing claims a method introduces. A forced method (`/methodology-toolkit:method <name>`) never bypasses it. The gate validates inputs; the conclusion is still produced by the methods downstream (5 Whys, ACH, First Principles). Delete the other methods and this card alone tells you a fact is trustworthy, not what it means.
