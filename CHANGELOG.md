@@ -31,6 +31,27 @@ the method's shape pushed the model to assert a root cause for a different quest
 - **`scripts/validate-skill.mjs`** (in CI): registry ↔ card files ↔ selection map ↔ card
   references in agents and command; no model-version notes in runtime text; listing-text and
   SKILL.md size budgets.
+- **`hooks/check-report.mjs` + `hooks/hooks.json`** — a `SubagentStop` hook in **observe mode**:
+  validates the critic's and scout's JSON reports against their contracts and appends
+  `{time, agent, ok, errors}` to `report-checks.jsonl` in the plugin data directory. Never blocks,
+  never logs report content. Blocking comes later, only for rules with a measured low false-positive
+  rate. Tested in CI (`scripts/test-check-report.mjs`).
+
+### Changed (breaking)
+- **`red-team-critic` returns one strict JSON object** (`schema_version` 1): `verdict`
+  (`material_defects_found` | `no_confirmed_material_defects` | `insufficient_evidence`),
+  methods with their steps, evidence with origin (`read` | `brief`), defects with basis
+  (`observed` | `deduced`), hypotheses, checks the caller must run (command may be `null`;
+  proposing a check grants no permission), limits. It may find nothing material; out-of-contract
+  inputs are not defects; the author's reasoning arrives separately as a position to challenge.
+  Its description no longer claims single-fact rechecks. `maxTurns: 20`.
+- **`evidence-scout` returns one strict JSON object** — at most 10 facts, each with `source_ref`
+  (URL or file + location), tier, `self_reported`, page and access dates, a verbatim quote of at
+  most 200 characters, `evidence_kind` (behaviour / opinion) for user evidence; conflicts,
+  not-found claims and gaps. `maxTurns: 25`.
+- Research mode R4 now accepts scout reports deliberately: decision-relevant facts first (does
+  the quote support the exact claim for the right plan, region and period), re-open a source only
+  when it does not or sources conflict, then a small spot-check as QA.
 
 ### Removed
 - **`methodology.md`** (836 lines, read in full on every invocation, before the early exit).
