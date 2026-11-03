@@ -7,7 +7,14 @@ caveat that Claude Code plugins have no install-time version pinning — a `/plu
 silently pulls the latest. Version numbers here are a declarative boundary, not an
 enforced one. The `v1.0.0` git tag marks the frozen pre-evidence-gate state.
 
-## [Unreleased] — 2.0.0 (in progress)
+## [2.0.0] — 2026-11-04
+
+**Results at release** (3 runs per case): main suite 41/42 on the default model and 42/42
+trigger-correct; on a smaller model the main suite's trigger cases went from 3/9 to 8/9 and the
+trigger dev set from 1/30 to 25/30, with 0/20 false triggers across both sets. On the untouched
+holdout set the smaller model with the plugin solves the correlation-vs-causation case 3/3 vs 1/3
+without it (it opens the data the user points to instead of answering from the summary); the
+other holdout cases score the same with and without the plugin.
 
 Driven by a baseline eval of 1.2.0 (14 cases × 3 runs, with / without plugin / one-line
 "check your grounds" control). Two findings led this first batch: the skill was
