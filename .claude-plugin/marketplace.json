@@ -10,7 +10,7 @@
       "name": "methodology-toolkit",
       "source": "./plugins/methodology-toolkit",
       "description": "Structured decision-making: /method command + methodology-driven-thinking skill + red-team-critic and evidence-scout subagents. 33 analytical frameworks applied explicitly, with evidence-gated product research.",
-      "version": "1.2.0"
+      "version": "2.0.0"
     }
   ]
 }
