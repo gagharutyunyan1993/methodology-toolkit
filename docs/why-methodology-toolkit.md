@@ -87,7 +87,7 @@ when the code or command output says otherwise.
 
 ## What the Plugin Actually Adds
 
-`methodology-toolkit` bundles three pieces that share one methodology index.
+`methodology-toolkit` bundles four pieces that share one methodology index.
 
 The first is the `methodology-driven-thinking` skill. It can activate on
 non-trivial tasks like architecture decisions, prioritization, root-cause
@@ -109,10 +109,16 @@ The third is the `red-team-critic` subagent. It is intentionally adversarial. It
 does not try to balance the positives. Its job is to find load-bearing
 assumptions, failure modes, attack paths, and disconfirming evidence.
 
-The shared index currently contains 29 methods, including Cynefin, OODA, PDCA,
+The fourth is the `evidence-scout` subagent, its mirror image. For product and
+market research it goes to the source that owns each fact — a competitor's
+pricing page, a changelog, a filing — and returns a table of values with URLs,
+dates, and source tiers. It draws no conclusions and never fills a gap from
+memory; a fact it cannot find comes back as `NOT FOUND`.
+
+The shared index currently contains 33 methods, including Cynefin, OODA, PDCA,
 First Principles, 5 Whys, Porter, ADKAR, JTBD, Theory of Constraints, OKR,
-Minto, BATNA, ACH, Red Team, Pre-mortem, PMESII, SWOT/TOWS, SAT, and Quality of
-Information Check.
+Opportunity Solution Tree, Mom Test, Minto, BATNA, ACH, Red Team, Pre-mortem,
+PMESII, SWOT/TOWS, SAT, and Quality of Information Check.
 
 The number is not the point. The point is that each method has explicit
 `use_when`, `avoid_when`, `steps`, and expected output. The agent is instructed

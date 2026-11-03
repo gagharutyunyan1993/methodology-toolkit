@@ -14,7 +14,10 @@ Each card has a consistent shape: origin, category, Cynefin fit, when to use, wh
 | Diagnose root cause             | 5 Whys · ToC · ACH                    |
 | Classify the problem            | Cynefin                               |
 | Analyze competition             | Porter · SWOT/TOWS · JTBD             |
-| Discover user needs             | JTBD · Double Diamond                 |
+| Discover user needs             | JTBD · Double Diamond · Mom Test      |
+| Find product opportunities      | Opportunity Solution Tree · JTBD      |
+| De-risk a product bet           | Assumption Mapping · Pre-mortem       |
+| Size a market                   | Market Sizing (bottom-up) · Porter    |
 | Map environment                 | PMESII · SWOT · Cynefin               |
 | Communicate to audience         | Minto · SCQA · SMEAC                  |
 | Negotiate                       | BATNA · Thomas-Kilmann                |
@@ -68,13 +71,22 @@ When multiple candidates appear plausible, use these distinctions to pick the ri
 - **SWOT + TOWS** — strategy synthesis from internal+external inventory. _Never standalone_ — pair with Porter, JTBD, or PMESII as the data source.
 - **PMESII** — full multi-domain environment scan (political, military, economic, social, infrastructure, information). Use for unfamiliar contexts.
 - **JTBD** — why customers actually buy; what job your product is hired for. Use for product/segmentation, not industry structure.
+- **Market Sizing (bottom-up)** — how big the reachable revenue is, built from countable units. Use when a number will drive a go/no-go or an investment case; never quote a top-down "1% of a $XB market".
+
+**Product discovery**
+
+- **JTBD** — _what_ progress the customer is trying to make. The lens for reading demand; it produces the job, not a plan.
+- **Mom Test** — _how_ to collect evidence about that job from people without being lied to. Use whenever the input is interviews, survey answers, sales calls, or "users told us".
+- **Opportunity Solution Tree** — _where_ to act: ties one outcome to the customer opportunities and the candidate solutions and experiments under it. Use when the backlog is a feature list with no visible link to an outcome.
+- **Assumption Mapping** — _what to test first_: ranks the beliefs a bet rests on by importance × evidence. Use once a solution or strategy is on the table and you need the riskiest unknown, not more ideas.
+- **Double Diamond** — the end-to-end process frame (discover → define → develop → deliver). Use when the problem itself is still undefined; the four above slot into its phases.
 
 **Bias control / meta-cognition**
 
 - **System 1/2 (Kahneman)** — notice which mode is driving the conclusion. Use as a first-pass meta-check.
 - **ACH** — structural defense against confirmation bias when reasoning over evidence.
 - **Mental Models (Munger)** — multi-lens check for blind spots from a single discipline.
-- **Quality of Information Check** — before a conclusion relies on a fact, verify it at primary-source level (code/git/command output), not docs/memory. Defense against asserting from partial evidence.
+- **Quality of Information Check** — before a conclusion relies on a fact, verify it at primary-source level (code/git/command output; for product and market facts, the entity's own dated page or the user's own data), not docs/memory. Defense against asserting from partial evidence.
 
 ---
 
@@ -436,6 +448,95 @@ When multiple candidates appear plausible, use these distinctions to pick the ri
 
 ---
 
+## Opportunity Solution Tree
+
+**Origin:** Teresa Torres, _Continuous Discovery Habits_
+**Category:** Product discovery / prioritization
+**Cynefin fit:** Complex
+
+**Use when:** Deciding what to build next; a roadmap or backlog is a list of features with no stated outcome; several stakeholders push competing solutions.
+
+**Avoid when:** The outcome is undefined and nobody owns one (set the outcome first — OKR); pure delivery work where the solution is already decided and validated.
+
+**Steps:**
+
+1. **Outcome** — write the single measurable outcome at the root (a metric the team can move, e.g. "week-4 retention of new accounts"), not a business goal ("grow revenue") and not an output ("ship reports v2").
+2. **Opportunities** — under it, list customer needs, pains, and desires phrased from the customer's side ("I can't tell which of my campaigns actually brought customers"), each traced to evidence (an interview, a support ticket, behavioural data). Opportunities with no evidence are marked as assumed.
+3. **Structure** — break large opportunities into smaller child opportunities until each one is concrete enough to solve in one go.
+4. **Choose a target** — pick one opportunity by size (how many customers, how often), evidence strength, and fit with strategy. Say why the others lose.
+5. **Solutions** — generate at least three candidate solutions for the target opportunity, so you compare rather than confirm.
+6. **Experiments** — under each solution, name the assumption test that would kill or keep it (see Assumption Mapping), cheapest first.
+
+**Output:** A visible chain outcome → opportunity → solution → experiment, so every proposed feature can answer "which opportunity, and what evidence says it matters?"
+
+---
+
+## Assumption Mapping
+
+**Origin:** David J. Bland (_Testing Business Ideas_, with Alexander Osterwalder), building on IDEO's desirability / viability / feasibility lens
+**Category:** Product risk / experiment design
+**Cynefin fit:** Complex
+
+**Use when:** A product bet, feature, pricing change, or new-market entry is on the table and you must decide what to validate before committing; the team is arguing opinions instead of tests.
+
+**Avoid when:** The bet is cheap and reversible (just ship and measure); the beliefs are already backed by strong primary evidence.
+
+**Steps:**
+
+1. Write the bet in one sentence (who, what, expected result).
+2. List every belief the bet needs to be true, under three headings: **Desirability** (they want it), **Viability** (it pays — pricing, CAC, margin, channel), **Feasibility** (we can build and run it). Phrase each as a falsifiable statement: "Team leads will pay $X/seat for Y."
+3. Place each belief on two axes: **importance** (if wrong, does the bet die?) × **evidence** (do we have primary evidence, or is it opinion?). Evidence is rated with Quality of Information Check tiers.
+4. The **important × no-evidence** quadrant is the test list. Order it by importance.
+5. For the top 1–3, design the cheapest test that could _disprove_ the belief: what you will do, what result counts as a pass, decided _before_ running it.
+
+**Output:** A short, ordered list of the riskiest assumptions, each with a pre-registered kill criterion — so the next week of work reduces the biggest unknown instead of polishing a feature.
+
+---
+
+## Mom Test
+
+**Origin:** Rob Fitzpatrick, _The Mom Test_
+**Category:** Customer evidence / interviewing
+**Cynefin fit:** Complex
+
+**Use when:** Planning or interpreting customer interviews, sales calls, surveys, or user feedback; any claim of the form "users want X" or "customers said they would pay".
+
+**Avoid when:** You have behavioural data that already answers the question (analytics, payments, usage logs) — read that first; usability testing of a built UI (use task-based tests instead).
+
+**Steps:**
+
+1. Talk about **their life, not your idea.** Drop the pitch; ask about the problem in their world.
+2. Ask about **specific past behaviour, not hypotheticals.** "When did this last happen? What did you do? What did it cost you?" — never "Would you use…?" or "Would you pay…?".
+3. **Discard bad data:** compliments ("sounds great"), fluff (generic or future-tense claims: "I usually", "I would", "I might"), and wish lists. Record them as noise, not signal.
+4. **Look for commitment and currency:** time, reputation, or money they already spend on the problem (workarounds, paid tools, hours) or will put down now (a pilot, an intro, a pre-order).
+5. When reading existing feedback, re-tag each statement as **behaviour** (did / paid / built a workaround) vs **opinion** (likes / would / wants). Only behaviour counts as evidence for demand.
+
+**Output:** A demand assessment built on what people did and committed, with stated opinions explicitly discounted.
+
+---
+
+## Market Sizing (bottom-up)
+
+**Origin:** Venture and corporate-strategy practice (TAM / SAM / SOM)
+**Category:** Market analysis / quantification
+**Cynefin fit:** Complicated
+
+**Use when:** A go/no-go, a pricing decision, a pitch, or an investment case depends on how big the opportunity is.
+
+**Avoid when:** The market does not exist yet and no proxy behaviour can be counted (switch to JTBD + Assumption Mapping and treat size as an assumption to test); the number would not change the decision.
+
+**Steps:**
+
+1. **Define the unit** — the countable buyer (companies with 50–500 employees using Google Workspace, HR teams of N+, etc.) and the price point per unit per year.
+2. **TAM** — count all units that have the job × annual price. Every count and price carries a source and its date (Quality of Information Check); a top-down analyst figure may be quoted only as a cross-check, never as the base.
+3. **SAM** — narrow to the units you can actually serve now (geography, language, integrations, segment, compliance) and show each filter with its number.
+4. **SOM** — the share of SAM you can realistically win in 1–3 years, derived from capacity (sales/marketing throughput, conversion rates you have observed or benchmarked), not from a chosen percentage.
+5. **Sanity-check** against one independent anchor (a competitor's disclosed revenue or user count, a public dataset). If bottom-up and anchor differ by more than ~3×, find out why before using either.
+
+**Output:** A defensible size estimate built from counts × price with every input sourced and dated, plus the assumption that moves it the most.
+
+---
+
 ## Theory of Constraints (Goldratt)
 
 **Origin:** Eliyahu Goldratt, _The Goal_
@@ -711,20 +812,25 @@ When multiple candidates appear plausible, use these distinctions to pick the ri
 **Category:** Evidence quality / epistemic discipline
 **Cynefin fit:** All — applies whenever a conclusion rests on facts
 
-**Use when:** A decision or analysis depends on specific claims — what a file contains, what a doc says, what a command will do, what the backend returns. Run it _before_ treating any claim as load-bearing.
+**Use when:** A decision or analysis depends on specific claims — what a file contains, what a doc says, what a command will do, what the backend returns, what a competitor charges, how many buyers exist, what users actually do. Run it _before_ treating any claim as load-bearing.
 
 **Avoid when:** Never skip on high-stakes conclusions. Only skippable for a fact you just observed at primary level moments ago.
 
 **Steps:**
 
 1. List each fact the conclusion depends on.
-2. Tag each fact by source-reliability tier (most reliable first):
-   - **Primary** — actual command output, code you just read, git history, test results.
-   - **Secondary** — generated type definitions (`.d.ts`), prose docs, CLAUDE.md, code comments. All subject to drift.
-   - **Inferred** — memory, assumption, "it's probably like X", analogy to another codebase.
-3. For any load-bearing fact resting on Secondary or Inferred, **promote it**: run the command, read the file, check git — convert it to Primary before relying on it.
-4. If a Secondary source conflicts with a Primary source, the Primary wins; flag the Secondary as stale.
+2. Tag each fact by source-reliability tier (most reliable first), using the column for its domain:
 
-**Output:** A conclusion where every load-bearing fact is verified at Primary level, not asserted from docs, memory, or partial evidence.
+   | Tier          | Code / systems                                                     | Product / market (external)                                                                                                                                                                                                     |
+   | ------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+   | **Primary**   | Command output, code you just read, git history, test results.     | The entity's own source, opened this session (pricing page, docs, changelog, terms, app-store listing, filings, official statistics); the user's own data (analytics, payments, support tickets, interview notes).              |
+   | **Secondary** | `.d.ts`, prose docs, CLAUDE.md, code comments. All subject to drift. | Third-party coverage: analyst reports, press, review sites, comparison blogs, search-result snippets, AI-generated summaries. Also an entity's claims about its own performance or adoption ("10,000 teams use us", "cuts reporting time by 40%") — tagged **self-reported**: the page is first-party, but nothing checks the number. Its own terms (prices, plan limits, features) are Primary, not self-reported. |
+   | **Inferred**  | Memory, assumption, "it's probably like X", analogy to another codebase. | Training-data memory ("as I recall they charge $X"), analogy to another market, extrapolation from one anecdote.                                                                                                                 |
 
-**Used as:** the engineering **Evidence gate** in `SKILL.md` Step 2.5 — that gate _is_ this card applied at the door to code claims before any method consumes them. It remains one method in this index, not a separate subsystem: the gate validates inputs; the conclusion is still produced by the methods downstream (5 Whys, ACH, First Principles). Delete the other methods and this card alone tells you a fact is trustworthy, not what it means.
+3. **Date every external fact.** Record the page date or, failing that, the date you accessed it. Prices, plans, feature sets, and headcounts decay in months; an undated product fact is Inferred regardless of where it came from.
+4. For any load-bearing fact resting on Secondary or Inferred, **promote it**: run the command, read the file, check git — or open the entity's own page, find the filing, read the user's data — and convert it to Primary before relying on it. If it cannot be promoted (no web access, paywalled, not published), keep it in the analysis **labelled** as unverified; never restate it as fact.
+5. If a Secondary source conflicts with a Primary source, the Primary wins; flag the Secondary as stale. If two Primary sources conflict (e.g. pricing page vs. docs), report both with dates rather than picking one.
+
+**Output:** A conclusion where every load-bearing fact is verified at Primary level — and, for external facts, sourced and dated — not asserted from docs, memory, or partial evidence.
+
+**Used as:** the **Evidence gate** in `SKILL.md` Step 2.5 — that gate _is_ this card applied at the door to code claims and to product/market claims before any method consumes them. It remains one method in this index, not a separate subsystem: the gate validates inputs; the conclusion is still produced by the methods downstream (5 Whys, ACH, First Principles). Delete the other methods and this card alone tells you a fact is trustworthy, not what it means.

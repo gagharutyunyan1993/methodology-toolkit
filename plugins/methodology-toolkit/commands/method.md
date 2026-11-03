@@ -9,11 +9,17 @@ User arguments: $ARGUMENTS
 
 ## How to parse the arguments
 
-If the first token of `$ARGUMENTS` matches a method name from the methodology index (case-insensitive; treat hyphens, underscores, and spaces as equivalent) — e.g., `OODA`, `PDCA`, `cynefin`, `porter`, `5-forces`, `ADKAR`, `kotter`, `first-principles`, `5-whys`, `eisenhower`, `GTD`, `SMEAC`, `schwerpunkt`, `mental-models`, `system-1-2`, `JTBD`, `double-diamond`, `theory-of-constraints`, `ToC`, `OKR`, `minto`, `SCQA`, `BATNA`, `thomas-kilmann`, `ACH`, `red-team`, `pre-mortem`, `PMESII`, `SWOT`, `TOWS`, `SAT`, `quality-of-information-check` — then:
+If the first token of `$ARGUMENTS` matches a method name from the methodology index (case-insensitive; treat hyphens, underscores, and spaces as equivalent) — e.g., `OODA`, `PDCA`, `cynefin`, `porter`, `5-forces`, `ADKAR`, `kotter`, `first-principles`, `5-whys`, `eisenhower`, `GTD`, `SMEAC`, `schwerpunkt`, `mental-models`, `system-1-2`, `JTBD`, `double-diamond`, `opportunity-solution-tree`, `OST`, `assumption-mapping`, `mom-test`, `market-sizing`, `TAM`, `theory-of-constraints`, `ToC`, `OKR`, `minto`, `SCQA`, `BATNA`, `thomas-kilmann`, `ACH`, `red-team`, `pre-mortem`, `PMESII`, `SWOT`, `TOWS`, `SAT`, `quality-of-information-check` — then:
 
 - Treat that token as the **forced method**.
 - Treat the rest of `$ARGUMENTS` as the task description.
 - Skip Cynefin classification — go straight to applying the named method.
+
+If the first token is `research`:
+
+- Treat the rest of `$ARGUMENTS` as the research question.
+- Run the skill's **Research mode** (R1–R6) end to end: Cynefin first, then frame the decision, gather and gate sourced, dated evidence (delegating to `evidence-scout` subagents when the scope spans several entities), apply the methods, and report in the research shape.
+- A method token may follow `research` (e.g. `/methodology-toolkit:method research JTBD who competes with us for small HR teams?`); use it as the forced method inside R5.
 
 Otherwise:
 

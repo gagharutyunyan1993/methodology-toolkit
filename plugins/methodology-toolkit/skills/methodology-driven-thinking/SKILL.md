@@ -1,6 +1,6 @@
 ---
 name: methodology-driven-thinking
-description: Apply structured decision-making and analytical frameworks to non-trivial problems. Use when the user asks for research, strategy, diagnosis, architecture decisions, prioritization, tradeoff analysis, root cause analysis, planning under uncertainty, problem-solving approach, "how should I approach X", or for engineering tasks that rest on load-bearing claims about code (bug, regression, code review, refactor, failing test, architecture claim). Selects 1-3 relevant methodologies from a curated index (Cynefin, First Principles, OODA, ACH, BATNA, JTBD, Theory of Constraints, etc.), applies them explicitly, and synthesizes a concrete answer.
+description: Apply structured decision-making and analytical frameworks to non-trivial problems. Use when the user asks for research, product or market research (competitor analysis, pricing, market sizing, customer discovery, demand validation, what to build next), strategy, diagnosis, architecture decisions, prioritization, tradeoff analysis, root cause analysis, planning under uncertainty, problem-solving approach, "how should I approach X", or for engineering tasks that rest on load-bearing claims about code (bug, regression, code review, refactor, failing test, architecture claim). Selects 1-3 relevant methodologies from a curated index (Cynefin, First Principles, OODA, ACH, BATNA, JTBD, Opportunity Solution Tree, Theory of Constraints, etc.), applies them explicitly, and synthesizes a concrete answer.
 ---
 
 # Methodology-Driven Thinking
@@ -17,29 +17,38 @@ Open `${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/methodology.md`. 
 
 Before selecting any other methodology, place the problem in a Cynefin domain:
 
-- **Clear / Simple** — known cause-effect, best practice exists. → **Exit the skill.** Answer directly. Methodologies are tax, not insurance, on trivial tasks.
+- **Clear / Simple** — known cause-effect, best practice exists. → **Exit the skill.** Answer directly. Methodologies are tax, not insurance, on trivial tasks. One thing survives the exit: a simple lookup of an external product fact ("what does X charge?", "does Y have SSO?") is still fetched from the owner's page and given with its source and date — never answered from memory.
 - **Complicated** — knowable through analysis/expertise. → Analytical methods fit (First Principles, ACH, 5 Whys, ToC, Porter, PMESII).
 - **Complex** — cause-effect only visible in hindsight; requires probes. → Iteration methods fit (OODA, PDCA, Double Diamond, JTBD).
 - **Chaotic** — no clear cause-effect. → Act first to stabilize, then re-classify.
 
 State the classification in one line. If you can't classify, that itself is a signal — say so.
 
-### Step 2.5 — Evidence gate (load-bearing code claims)
+### Step 2.5 — Evidence gate (load-bearing checkable claims)
 
-This step runs **after** the Clear/Simple exit and **before** method selection — trivial tasks never reach it. If the task survived Step 2 **and** rests on a load-bearing claim about code — what a function returns, where a defect lives, what a command does, what the backend sends — gate the claim before any method consumes it:
+This step runs **after** the Clear/Simple exit and **before** method selection — trivial tasks never reach it. If the task survived Step 2 **and** rests on a load-bearing claim that a source could confirm or refute, gate the claim before any method consumes it. Two kinds of claim qualify:
+
+- **Code claims** — what a function returns, where a defect lives, what a command does, what the backend sends.
+- **Product / market claims** — what a competitor charges or ships, how many buyers exist, what users actually do, what a regulation or platform policy says.
 
 1. Name the claim explicitly: "This conclusion depends on X being true."
-2. Tag its current source tier — **Primary** (code you read, command output, git, test results), **Secondary** (`.d.ts`, prose docs, comments — subject to drift), or **Inferred** (memory, assumption, analogy).
-3. Promote every load-bearing claim to **Primary** before it enters a method: run the command, read the file, check git. A claim that stays Secondary/Inferred is a hypothesis, not an input.
+2. Tag its current source tier — **Primary**, **Secondary**, or **Inferred** — using the column for its domain in the **Quality of Information Check** card. In short: for code, Primary is code you read, command output, git, tests; for product/market, Primary is the entity's own page opened this session or the user's own data, **with a date**. Anything recalled from training data is Inferred, however confident it feels.
+3. Promote every load-bearing claim to **Primary** before it enters a method: run the command, read the file, check git — or open the pricing page, the changelog, the filing, the analytics export. A claim that stays Secondary/Inferred is a hypothesis, not an input; if it cannot be promoted (no web access, paywalled), carry it forward labelled as unverified.
 
-This is **Quality of Information Check** applied at the door (see its card in the index). The gate validates the *inputs* only — it does **not** produce the conclusion. "Claim verified" is not an answer; deciding _why_ the fact holds, _where_ the defect is, and _what_ the fix should be is still the methods' job (5 Whys, ACH, First Principles). If the task carries no code claim (pure strategy, planning, communication), skip the gate and go to Step 3.
+This is **Quality of Information Check** applied at the door (see its card in the index). The gate validates the _inputs_ only — it does **not** produce the conclusion. "Claim verified" is not an answer; deciding _why_ the fact holds, _where_ the defect is, _which_ opportunity to pursue, and _what_ to do is still the methods' job (5 Whys, ACH, First Principles, JTBD, Assumption Mapping). If the task carries no checkable claim — the inputs are judgements about people, timing, or preference — skip the gate and go to Step 3.
+
+When the task is product or market research, the gate is not a one-off check: run the **Research mode** below, which wraps the gate and Steps 3–5.
 
 <example>
 Gate fires (code claim): "The page crashes because `profile` can be null." Tier: **Inferred** — assumed from the stack-trace shape. Promote: read the API client and run the failing test → the endpoint returns 204 with an empty body, so `profile` really is null at runtime. Now **Primary**. → Hand off to 5 Whys / ACH to find _why_ the body is empty and _where_ the fix belongs. The gate proved the fact is real; it did not choose the fix.
 </example>
 
 <example>
-Gate skipped (no code claim): "Should we enter the EU market before or after the Series A?" Nothing here rests on a verifiable fact about code — the inputs are strategic judgements, not file contents or command output. Do **not** run the evidence gate; go straight to Step 3 and select methods (e.g. BATNA, Pre-mortem, Porter). Forcing a code-evidence gate onto a pure-strategy task is exactly the theater the Clear/Simple off-ramp exists to prevent.
+Gate fires (market claim): "Competitor X has no free tier, so a freemium plan wins the low end." Tier: **Inferred** — recalled, no source. Promote: open X's pricing page → a free plan for up to 3 users exists (page checked 2026-09-14). The premise is false, so the strategy is rebuilt before any method runs on it. Had the page confirmed it, the gate would still not decide the strategy — that is JTBD / Assumption Mapping's job.
+</example>
+
+<example>
+Gate skipped (no checkable claim): "How should I sequence telling the team, the board, and our customers about the reorg?" The inputs are judgements about people and timing, not facts a file, a command, or a public source could settle. Do **not** run the evidence gate; go straight to Step 3 (e.g. SCQA, SMEAC, ADKAR). Forcing an evidence gate onto a pure-judgement task is exactly the theater the Clear/Simple off-ramp exists to prevent.
 </example>
 
 ### Step 3 — Select 1–3 methodologies
@@ -54,7 +63,10 @@ Match to (Cynefin domain) × (task type). Common pairings:
 | Root cause                   | 5 Whys, ToC, ACH                    |
 | Competitive analysis         | Porter, SWOT/TOWS, JTBD             |
 | Environment assessment       | PMESII, SWOT, Cynefin               |
-| User/customer discovery      | JTBD, Double Diamond                |
+| User/customer discovery      | JTBD, Mom Test, Double Diamond      |
+| What to build next           | Opportunity Solution Tree, JTBD     |
+| Validate a product bet       | Assumption Mapping, Pre-mortem      |
+| Market size / opportunity    | Market Sizing (bottom-up), Porter   |
 | Communication                | Minto, SCQA, SMEAC                  |
 | Negotiation                  | BATNA, Thomas-Kilmann               |
 | Org change                   | ADKAR, Kotter, PDCA                 |
@@ -77,6 +89,27 @@ Applied (passes): "5 Whys — Why did the page crash? The render threw. Why? `us
 
 Where do the chosen methods agree? Where do they diverge? Give the user an actionable conclusion. If methods conflict, name the conflict — don't paper over it.
 
+## Research mode (product and market questions)
+
+Runs when the user asks for product, market, competitor, pricing, or customer research — "research the competitors of X", "is there demand for Y", "how big is the market for Z", "what should we build next". Product facts live outside the codebase and decay fast, so this mode gathers and gates evidence _before_ any method consumes it. It wraps Steps 2.5–5; Cynefin (Step 2) still runs first.
+
+**R1 — Frame the decision.** One line: which decision does this research inform, and what finding would change it? If nothing depends on the answer, say so and narrow to a question the user can act on. State scope assumptions (segment, geography, time frame) and proceed; ask only when the ambiguity changes which sources to read (e.g. two companies share the name).
+
+**R2 — List questions and load-bearing claims.** 3–7 key questions. Under each, the specific facts the answer will rest on — prices, counts, feature presence, user behaviour, policy text. These are the gate's inputs, written down before searching so the search can't quietly redefine the question.
+
+**R3 — Gather from the source that owns each fact.** Pricing → the vendor's pricing page; features → its docs and changelog; scale → filings, official statistics, app-store listings; behaviour → the user's own analytics, tickets, interview notes. Search to find, then open the page — a search snippet is Secondary until the page is read. Every fact gets its URL and a date. When the facts span several entities or more than ~5 independent lookups, delegate the gathering to `evidence-scout` subagents in parallel (one per competitor or per question); they return sourced, tiered, dated facts and no conclusions. Without web tools, say so up front, treat every external fact as Inferred, and turn the gaps into a checklist the user can run.
+
+**R4 — Gate.** Run Step 2.5 over everything gathered: tier, date, conflicts between sources. Label whatever didn't promote. For every claim about what users want, tag it as behaviour (did, paid, built a workaround) or opinion (likes, would, wants) — only behaviour counts as evidence of demand (Hard Rule "Stated preference is not demand"). This tag is part of the gate, not a method, and does not count toward the 3-method limit; run the full Mom Test only when interviews are the main evidence and you are planning or interpreting them.
+
+**R5 — Apply methods (Steps 3–5) to the gated facts only.** Typical sets: competitor research → JTBD (what job each rival is hired for) + Porter or SWOT/TOWS; demand → JTBD + Mom Test; what to build → Opportunity Solution Tree + Assumption Mapping; sizing → Market Sizing (bottom-up). Same rules as everywhere: at most 3 methods, every step walked.
+
+**R6 — Report in research shape** (see Output shape).
+
+<example>
+Theater (fails): "Using Porter and SWOT: the market is competitive, rivals have strong brands, our opportunity is AI features." No sources, no dates, prices from memory, methods named but not walked.
+Applied (passes): R1 — the decision is whether to launch a $8/seat tier. R2 — claims: rival A's and rival B's entry price and seat limits; how many target teams already pay for a tool. R3 — pricing pages opened (A: $12/seat, checked 2026-10-02; B: free ≤3 seats, then $10, checked 2026-10-02); 9 of 14 interview notes show a paid workaround. R4 — all Primary and dated; two interview "would pay" quotes discounted as opinion. R5 — JTBD: situation — a lead of 3–8 people preparing a monthly review; job — show progress without hand-built reports; competing solutions — B's free tier, a spreadsheet, a part-time analyst; friction — B's free tier stops at 3 seats, spreadsheets break at month-end → teams of 4–10 sit in a price gap. Assumption Mapping: bet — an $8/seat tier lifts 4–10 seat trial-to-paid from 6% to 10%; beliefs — teams of 4–10 hit B's cap (desirability, Primary), price rather than onboarding blocks conversion (viability, no evidence), we can enforce a seat cap (feasibility, Primary); important × no-evidence → the price belief; kill test — an $8 checkout arm that must reach 10%. Bottom line: test an $8/seat price on 4–10 seat trials before launching the tier.
+</example>
+
 ## Hard Rules
 
 - **Max 3 methods per response.** Cognitive overhead exceeds value past that.
@@ -87,6 +120,8 @@ Where do the chosen methods agree? Where do they diverge? Give the user an actio
 - **5 Whys weakens past 2–3 levels on human/political problems.** Switch to ACH or Cynefin if you find yourself inventing motives.
 - **ADKAR is an org-change tool**, not a self-coaching tool. Don't apply to single personal decisions.
 - **"Not a regression" is not an acceptance criterion.** When Pre-mortem or Red Team surfaces a real defect, the default is to fix it — not to rationalize it. Comparing to prior broken behavior ("the original also had this", "no worse than before", "same as legacy") legitimizes shipping a known bug under methodological cover. The valid question is "what does correct look like?" — answered via First Principles — not "is this worse than current?". A defect inherited from the old code is still a defect.
+- **No product or market fact from memory.** Prices, plans, feature sets, user counts, and market sizes recalled from training data are Inferred and probably stale. Open the source, or label the fact unverified — never state it as current.
+- **Stated preference is not demand.** "Users said they want X" or "would pay" is opinion; what they did, paid for, or built as a workaround is evidence. Weight them differently and say which is which.
 - **No code claim without primary evidence.** On engineering tasks the Evidence gate (Step 2.5) is not optional — promote every load-bearing code claim to Primary before a method consumes it. The gate rejects unverified inputs; it does not replace the methods that turn a verified fact into a decision. (Mechanics in the next rule.)
 - **Verify load-bearing claims before asserting them, not after.** When a conclusion rests on a specific fact — file content, a grep result, what a doc says, what a command will do — run the check _first_. Partial evidence (one file, one grep, prose in a `.md` doc or a `.d.ts`) is a hypothesis, not a conclusion: state it as "I need to verify X", verify, then conclude. A claim baked into an ACH evidence row or a First Principles base fact must be a _checked_ fact, or the method is corrupted. Primary sources (code you read, command output, git history, test results) outrank secondary ones (docs, comments, generated `.d.ts`) — see **Quality of Information Check** in the index.
 
@@ -100,8 +135,18 @@ The pattern: first pass is fast and speculative (good for surfacing direction); 
 
 The second pass must use real verification, not just renaming methods: grep the codebase, run tests, open the browser, read the file you assumed about. Methodology without verification is the same theater the anti-pattern guard forbids.
 
+For research, point the second pass at the bottom line and the High-confidence findings: "what source would make this wrong, and did we look for it?" A finding that only has confirming sources has not been tested.
+
 Skip the double-pass when: the first pass already grounded itself in verified evidence (read the file, ran the test, checked the breakpoint), or the task is genuinely Clear/Simple.
 
 ## Output shape
 
 End with a concrete actionable conclusion. The user should be able to _act_ on the response, not just understand a framework. The methodology is the scaffolding, not the building.
+
+For **Research mode**, use this shape, scaled to the size of the question:
+
+1. **Bottom line** — the answer to the R1 decision in 2–3 sentences, first, not last.
+2. **Key findings** — numbered, most decision-relevant first. Each carries a confidence and its sources (link + date). **High**: every fact it rests on is Primary and dated — one owner page is enough for a fact that has one owner, like a price — and no source contradicts it. **Medium**: it rests partly on Secondary sources, or on a single source type where independent ones exist (e.g. interviews only). **Low**: Inferred, conflicting, or self-reported only.
+3. **Analysis** — the chosen methods, each walked step by step.
+4. **What we don't know** — unverified claims and gaps, marking the ones that would flip the bottom line if they turned out differently.
+5. **Next step** — the cheapest action that shrinks the biggest unknown (a pricing-page test, five interviews, a data pull), with its pass/fail criterion stated in advance.
