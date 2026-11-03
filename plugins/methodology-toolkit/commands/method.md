@@ -13,7 +13,7 @@ If the first token of `$ARGUMENTS` matches a method name from the methodology in
 
 - Treat that token as the **forced method**.
 - Treat the rest of `$ARGUMENTS` as the task description.
-- Skip Cynefin classification — go straight to applying the named method.
+- Skip Cynefin classification and automatic method selection — but **not** the Evidence gate (Step 2.5): check the load-bearing claims in the task before the named method consumes them. A forced method changes _which_ method runs, never which facts count as true. If a premise turns out false, say so and apply the method to the corrected facts.
 
 If the first token is `research`:
 
@@ -31,7 +31,7 @@ Otherwise:
 1. Read `${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/methodology.md` to get the canonical definitions, steps, and use/avoid criteria for the chosen method(s).
 2. Apply the protocol from the `methodology-driven-thinking` skill (`${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/SKILL.md`).
 3. Force methodological discipline even on borderline tasks — the user explicitly asked for it. Do not bail to "this is too simple" unless the task is truly trivial; in that case, say so and ask whether they still want the analysis.
-4. **Anti-pattern guard:** walk through the steps of _every_ method you invoke, not just the first one. Opus 4.8 reads instructions literally and will not generalize "walk through the steps" across multiple methods unless you say so explicitly. Naming a method without applying its steps is the failure mode.
+4. **Anti-pattern guard:** walk through the steps of _every_ method you invoke, not just the first one — the rule applies to each method separately. Naming a method without applying its steps is the failure mode; so is filling a step with invented content to complete the method's shape (see the skill's Step 4 rules: evidence on every link, `[planned]` for unexecuted steps, answer the question asked).
 
 ## Edge cases
 

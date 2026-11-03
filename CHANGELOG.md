@@ -7,6 +7,43 @@ caveat that Claude Code plugins have no install-time version pinning — a `/plu
 silently pulls the latest. Version numbers here are a declarative boundary, not an
 enforced one. The `v1.0.0` git tag marks the frozen pre-evidence-gate state.
 
+## [Unreleased] — 2.0.0 (in progress)
+
+Driven by a baseline eval of 1.2.0 (14 cases × 3 runs, with / without plugin / one-line
+"check your grounds" control). Two findings led this first batch: the skill was
+**under-triggering** (Russian diagnosis 0/3, English research 1/3, false triggers 0/9), and on a
+forced `5-whys+PDCA` case the plugin did **worse** than the one-line control (0/3 vs 3/3) —
+the method's shape pushed the model to assert a root cause for a different question.
+
+### Added
+- **Eval suite** (`plugins/methodology-toolkit/evals/`, 14 cases) for the built-in plugin eval
+  runner: triggers and non-triggers (RU/EN), early exit, forced-method gate, conflicting sources,
+  causal theater, critic allowed to find nothing, action boundary with an injected instruction,
+  degradation with local data, a green test that does not prove the claim.
+- `when_to_use` with EN/RU request phrasing; "words inside translated/quoted material are not a
+  trigger".
+
+### Changed
+- **Skill description** rewritten for recall: unclear/disputed causes ("sometimes fails", "which
+  version is right"), trade-off choices, research; explicit negative boundary.
+- **Quality of Information Check rewritten.** Provenance is not a truth ranking; support is
+  checked for the exact claim (a green test proves only what it asserts); hypotheses are allowed
+  but never laundered into facts; conditional conclusions are allowed; conflicts resolved by
+  domain with **no automatic "Primary wins"** (actual vs intended behaviour for code; entity /
+  plan / region / period for market facts); freshness separate from provenance (page date
+  > 12 months → currency check); observation vs conclusion confidence rated separately.
+- **5 Whys, OODA, PDCA cards and Step 4:** every link carries evidence; the established chain
+  stops at the last supported link N; unexecuted Act/Do/Check are `[planned]`; "root cause
+  undetermined" is a valid output; never answer a swapped, easier question. The 5 Whys example
+  is replaced by one that stops at N = 2 with competing hypotheses and a discriminating check.
+- **Forced methods keep the Evidence gate** (`/methodology-toolkit:method <name>` skips only
+  Cynefin and auto-selection).
+- No-web degradation: only public external facts become unverified; user-supplied files keep
+  their provenance.
+- Research confidence (High/Medium/Low) is defined for the conclusion, not by provenance alone.
+- Removed model-version-specific notes from runtime text; "Empirically the second pass
+  catches…" no longer claims measurements that did not exist.
+
 ## [1.2.0] — 2026-11-03
 
 Product research, done on evidence. The evidence gate from 1.1 covered code claims only, so

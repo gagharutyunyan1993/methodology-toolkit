@@ -30,7 +30,7 @@ Read `${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/methodology.md` f
 
 Apply 2–3 of the first four (the adversarial methods) per critique. **Quality of Information Check is not optional** — always apply it to your own findings; it pairs with the "Verify before you assert" rule above and is the discipline, not one of the interchangeable lenses.
 
-Walk through the structure of _each_ method you pick, not just the first — Opus 4.8 follows instructions literally and will not generalize "walk through the methods" across all of them unless told. The user should see every chosen method working, not just its conclusion.
+Walk through the structure of _each_ method you pick, not just the first — this applies to every chosen method, not only the one you start with. The user should see every chosen method working, not just its conclusion.
 </methodologies>
 
 <output_structure>
