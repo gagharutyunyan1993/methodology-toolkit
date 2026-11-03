@@ -24,7 +24,7 @@ For the longer rationale, read: [Claude Does Not Need More Prompts. It Needs Rea
 | `evidence-scout` | **subagent** | Research legwork for one narrow scope (a competitor, a question, a segment). Returns facts only, as one strict JSON object — exact value, source reference, tier, page and access dates, verbatim quote — with conflicts and not-found claims reported, never filled from memory. Spawned in parallel by Research mode. |
 | `hooks/` | hook | Observe-only `SubagentStop` check: validates the critic's and scout's JSON against their contracts and logs pass/fail (no report content) to the plugin data directory. Never blocks. |
 | `references/` | method cards | One card per method (33 files: `use_when` / `avoid_when` / `steps` / `output`) plus `methods.json`, the registry of slugs and aliases. The skill routes from a selection map in `SKILL.md` and opens only the 1–3 cards it uses. |
-| `evals/` | eval suite | Cases for the built-in plugin eval runner: triggers and non-triggers, early exit, evidence gate, causal theater, critic, action boundary, degradation. |
+| `evals/` | eval suite | Cases for the built-in plugin eval runner: triggers and non-triggers, early exit, evidence gate, causal theater, critic, action boundary, degradation. `evals-triggers/` is the trigger-recall dev set; `evals-holdout/` is never tuned against. |
 
 ### How they fit together
 
