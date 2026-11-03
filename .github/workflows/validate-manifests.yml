@@ -18,3 +18,5 @@ jobs:
         run: node scripts/validate-manifests.mjs
       - name: Validate skill package integrity
         run: node scripts/validate-skill.mjs
+      - name: Test subagent report checker
+        run: node scripts/test-check-report.mjs
