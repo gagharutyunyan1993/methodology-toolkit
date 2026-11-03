@@ -1,6 +1,6 @@
 # Maintenance
 
-> Maintainer process for this skill — **not** runtime content. This file is intentionally kept out of `methodology.md` so it doesn't load into the model's context on every invocation.
+> Maintainer process for this skill — **not** runtime content. This file is intentionally kept out of `SKILL.md` and `references/` so it never loads into the model's context at runtime.
 
 Every 3–4 weeks, review recent methodology-driven sessions and ask:
 
@@ -12,6 +12,6 @@ Every 3–4 weeks, review recent methodology-driven sessions and ask:
 - **Where did the agent name a method without actually applying it?** → `SKILL.md` anti-pattern guard needs strengthening.
 - **In Research mode runs, which external facts reached the report without a source or a date, or were later found wrong?** → The evidence gate or `evidence-scout`'s rules need tightening. Track whether wrong facts came from memory, from snippets that were never opened, or from self-reported vendor numbers.
 
-Output of each review: concrete edits to `methodology.md` or to `SKILL.md`. If a review produces no edits, that's also a valid result — note it and re-check next cycle.
+Output of each review: concrete edits to a card in `references/`, to `references/methods.json`, or to `SKILL.md`. If a review produces no edits, that's also a valid result — note it and re-check next cycle.
 
 The review is the only feedback loop this library has. Skipping it means the library reflects taste rather than reality.

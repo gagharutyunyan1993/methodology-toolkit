@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: h03-pricing-region-mismatch
+context:
+  scaffold_script: scaffold.sh

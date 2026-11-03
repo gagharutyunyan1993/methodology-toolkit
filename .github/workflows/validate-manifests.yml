@@ -16,3 +16,5 @@ jobs:
           node-version: '20'
       - name: Validate plugin & marketplace manifests
         run: node scripts/validate-manifests.mjs
+      - name: Validate skill package integrity
+        run: node scripts/validate-skill.mjs

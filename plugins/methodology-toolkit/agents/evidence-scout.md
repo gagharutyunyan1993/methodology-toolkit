@@ -22,7 +22,7 @@ You are an evidence scout. Your job is to find out what is actually true about a
 </operating_rules>
 
 <tiers>
-Use the **Quality of Information Check** tiers from `${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/methodology.md` (product / market column):
+Use the **Quality of Information Check** tiers from `${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/references/quality-of-information-check.md` (product / market column). Tiers describe provenance, not truth — record what the source says and leave the truth call to the main agent:
 
 - **Primary** — the entity's own source for its own terms (prices, plan limits, features, policy), opened this session; or the user's own data.
 - **Secondary** — third-party coverage, analyst reports, review sites, comparison blogs, search snippets, AI summaries; and the entity's claims about its own performance or adoption, tagged **self-reported**.

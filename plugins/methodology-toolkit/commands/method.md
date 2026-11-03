@@ -1,41 +1,35 @@
 ---
 description: Force methodology-driven analysis of a task, optionally with a specific method
-argument-hint: "[method-name] <task description>"
+argument-hint: "[method[+method...] | research [method] | recheck] <task description>"
 ---
 
 The user has explicitly invoked methodology-driven reasoning via `/methodology-toolkit:method`.
 
 User arguments: $ARGUMENTS
 
-## How to parse the arguments
+## Routes
 
-If the first token of `$ARGUMENTS` matches a method name from the methodology index (case-insensitive; treat hyphens, underscores, and spaces as equivalent) — e.g., `OODA`, `PDCA`, `cynefin`, `porter`, `5-forces`, `ADKAR`, `kotter`, `first-principles`, `5-whys`, `eisenhower`, `GTD`, `SMEAC`, `schwerpunkt`, `mental-models`, `system-1-2`, `JTBD`, `double-diamond`, `opportunity-solution-tree`, `OST`, `assumption-mapping`, `mom-test`, `market-sizing`, `TAM`, `theory-of-constraints`, `ToC`, `OKR`, `minto`, `SCQA`, `BATNA`, `thomas-kilmann`, `ACH`, `red-team`, `pre-mortem`, `PMESII`, `SWOT`, `TOWS`, `SAT`, `quality-of-information-check` — then:
+Resolve method names against the registry `${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/references/methods.json` — the single list of slugs, display names and aliases. Normalize the token first: lower-case, and treat spaces, underscores and hyphens as equivalent (`First_Principles`, `first principles`, `first-principles` are the same). A token matches a method if it equals its slug or one of its aliases.
 
-- Treat that token as the **forced method**.
-- Treat the rest of `$ARGUMENTS` as the task description.
-- Skip Cynefin classification and automatic method selection — but **not** the Evidence gate (Step 2.5): check the load-bearing claims in the task before the named method consumes them. A forced method changes _which_ method runs, never which facts count as true. If a premise turns out false, say so and apply the method to the corrected facts.
+| First token of `$ARGUMENTS`                         | Route                | What runs                                                                                                                                                                              |
+| --------------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| one method, or up to three joined by `+` (`ach+red-team`) | **forced**     | Skip Cynefin and automatic selection. **The Evidence gate (skill Step 2) still runs** before the method consumes the task's claims. Open each named card and walk it (skill Step 4–5).   |
+| `research`, optionally followed by one method token | **research**         | The skill's Research mode (R1–R6) end to end; a following method token is the forced method inside R5 (e.g. `research jtbd who competes with us for small teams?`).                      |
+| `recheck`                                           | **recheck**          | Independent critique of a decision, plan or conclusion: brief the `red-team-critic` subagent with the target (the previous answer unless the rest of `$ARGUMENTS` names another one). Not for re-checking a single fact or a calculation — do that directly. |
+| anything else                                       | **auto**             | The whole of `$ARGUMENTS` is the task: the full skill protocol (Cynefin → gate → select 1–3 → open cards → apply → synthesize).                                                         |
 
-If the first token is `research`:
-
-- Treat the rest of `$ARGUMENTS` as the research question.
-- Run the skill's **Research mode** (R1–R6) end to end: Cynefin first, then frame the decision, gather and gate sourced, dated evidence (delegating to `evidence-scout` subagents when the scope spans several entities), apply the methods, and report in the research shape.
-- A method token may follow `research` (e.g. `/methodology-toolkit:method research JTBD who competes with us for small HR teams?`); use it as the forced method inside R5.
-
-Otherwise:
-
-- Treat the entire `$ARGUMENTS` as the task description.
-- Follow the full `methodology-driven-thinking` protocol (Cynefin classification → select 1–3 methods → apply → synthesize).
+A forced method changes _which_ method runs, never which facts count as true. If a premise of the task turns out false, say so and apply the method to the corrected facts.
 
 ## Then
 
-1. Read `${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/methodology.md` to get the canonical definitions, steps, and use/avoid criteria for the chosen method(s).
-2. Apply the protocol from the `methodology-driven-thinking` skill (`${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/SKILL.md`).
-3. Force methodological discipline even on borderline tasks — the user explicitly asked for it. Do not bail to "this is too simple" unless the task is truly trivial; in that case, say so and ask whether they still want the analysis.
-4. **Anti-pattern guard:** walk through the steps of _every_ method you invoke, not just the first one — the rule applies to each method separately. Naming a method without applying its steps is the failure mode; so is filling a step with invented content to complete the method's shape (see the skill's Step 4 rules: evidence on every link, `[planned]` for unexecuted steps, answer the question asked).
+1. Apply the protocol from the `methodology-driven-thinking` skill (`${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/SKILL.md`). Open only the cards of the methods that will run (`references/<slug>.md`), never the whole library.
+2. Force methodological discipline even on borderline tasks — the user explicitly asked for it. Do not bail to "this is too simple" unless the task is truly trivial; in that case, say so and ask whether they still want the analysis.
+3. **Anti-pattern guard:** walk through the steps of _every_ method you invoke, not just the first one — the rule applies to each method separately. Naming a method without applying its steps is the failure mode; so is filling a step with invented content to complete the method's shape (see the skill's Step 4 rules: evidence on every link, `[planned]` for unexecuted steps, answer the question asked).
 
 ## Edge cases
 
-- If `$ARGUMENTS` is empty, ask the user what task to analyze and whether they want a specific method or `auto`.
-- If multiple methods are listed (e.g., `/methodology-toolkit:method ACH+red-team <task>`), apply up to 3.
-- If the user names a method that doesn't exist in the index, list the available methods and ask them to pick.
+- `$ARGUMENTS` empty → ask what task to analyze and whether they want a specific method or `auto`.
+- More than three methods joined by `+` → say only three run, name the three you keep, and ask whether that choice is right before applying.
+- A token that looks like a method name (it contains `+`, or it is the only word before an obvious task) but matches nothing in the registry → do not guess: list the closest slugs from `methods.json` and ask which one was meant. A first word that is plainly part of the task ("why does…", "should we…") is the **auto** route, not an unknown method.
+- A token that matches more than one method → list the matches and ask.
 - If the synthesis lands on a recommendation to take a hard-to-reverse action (touches money/auth/data integrity, a destructive or externally-visible operation, or a plan committed without reading the relevant code), **offer** a `red-team-critic` pass at the end rather than running it silently — e.g. "This is hard to reverse; want an independent red-team pass before committing?". Let the user decide; don't spawn the subagent automatically.

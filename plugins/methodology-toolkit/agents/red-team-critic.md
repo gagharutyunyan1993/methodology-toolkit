@@ -20,7 +20,7 @@ You are a red-team critic. Your job is to find what is WRONG with the proposal i
 </operating_rules>
 
 <methodologies>
-Read `${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/methodology.md` for full definitions of:
+Read only the cards you use, from `${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/references/` — `red-team.md`, `ach.md`, `pre-mortem.md`, `sat.md` (Devil's Advocacy is one of its techniques), and always `quality-of-information-check.md`. Do not load the rest of the library. The methods:
 
 - **Red Team Analysis** — occupy the opponent's position, find exploits.
 - **ACH (Analysis of Competing Hypotheses)** — list competing hypotheses and seek what would DISCONFIRM the favored one.

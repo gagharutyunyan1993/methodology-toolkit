@@ -19,26 +19,26 @@ For the longer rationale, read: [Claude Does Not Need More Prompts. It Needs Rea
 | Component | Type | What it does |
 | --- | --- | --- |
 | `methodology-driven-thinking` | **skill** | Auto-triggers on non-trivial tasks. Classifies the problem (Cynefin), gates load-bearing claims on evidence, selects 1–3 fitting methods, applies each by its steps, synthesizes an actionable answer. For product and market questions it switches to **Research mode**: frame the decision → gather sourced, dated facts → gate → methods → BLUF report with confidence and next experiment. |
-| `/methodology-toolkit:method` | **command** | Manual trigger. `/...:method <task>` runs the full protocol; `/...:method ACH+pre-mortem <task>` forces specific methods; `/...:method research <question>` forces Research mode. |
+| `/methodology-toolkit:method` | **command** | Manual trigger. `/...:method <task>` runs the full protocol; `/...:method ACH+pre-mortem <task>` forces specific methods (the evidence gate still runs); `/...:method research <question>` forces Research mode; `/...:method recheck` sends the previous answer to `red-team-critic`. |
 | `red-team-critic` | **subagent** | Independent adversarial pass. Returns critique only — load-bearing assumptions, failure modes, exploits, disconfirming evidence — verified against primary sources. |
 | `evidence-scout` | **subagent** | Research legwork for one narrow scope (a competitor, a question, a segment). Returns an evidence table only — exact value, source URL, tier, date, quote — with conflicts and `NOT FOUND`s reported, never filled from memory. Spawned in parallel by Research mode. |
-| `methodology.md` | shared index | The authoritative library of all 33 methods (`use_when` / `avoid_when` / `steps` / `output`). Every component reads from it. |
+| `references/` | method cards | One card per method (33 files: `use_when` / `avoid_when` / `steps` / `output`) plus `methods.json`, the registry of slugs and aliases. The skill routes from a selection map in `SKILL.md` and opens only the 1–3 cards it uses. |
+| `evals/` | eval suite | Cases for the built-in plugin eval runner: triggers and non-triggers, early exit, evidence gate, causal theater, critic, action boundary, degradation. |
 
 ### How they fit together
 
 ```
 Non-trivial task
    ├─ auto  → methodology-driven-thinking skill ─┐
-   └─ manual → /methodology-toolkit:method ───────┤──→ read methodology.md
+   └─ manual → /methodology-toolkit:method ───────┤──→ classify → gate → pick 1–3 → open only those cards
                                                   │
    product / market question → Research mode:
       frame decision → evidence-scout × N (parallel, sourced + dated)
                      → evidence gate → methods → BLUF report
 
    double-pass (stress-test the first answer):
-      /methodology-toolkit:method recheck   (inline, by yourself)
-                 or
-      red-team-critic                       (subagent, independent context)
+      unverified inputs  → back to the evidence gate (check them yourself)
+      high cost of error → red-team-critic (subagent, independent context)
 ```
 
 ## Install
@@ -114,7 +114,9 @@ The goal is not to make Claude _sound_ more strategic. The goal is to make it ha
 
 Cynefin · OODA · PDCA · First Principles · 5 Whys · 5 Forces (Porter) · ADKAR · Kotter · Eisenhower · GTD · SMEAC · Schwerpunkt · Mental Models · System 1/2 · JTBD · Double Diamond · Opportunity Solution Tree · Assumption Mapping · Mom Test · Market Sizing (bottom-up) · Theory of Constraints · OKR · Minto Pyramid · SCQA · BATNA · Thomas-Kilmann · ACH · Red Team · Pre-mortem · PMESII · SWOT/TOWS · SAT · Quality of Information Check.
 
-Full definitions in [`plugins/methodology-toolkit/skills/methodology-driven-thinking/methodology.md`](plugins/methodology-toolkit/skills/methodology-driven-thinking/methodology.md).
+Full definitions in [`plugins/methodology-toolkit/skills/methodology-driven-thinking/references/`](plugins/methodology-toolkit/skills/methodology-driven-thinking/references/).
+
+**Scope note:** the evidence rules live in the skill. If the skill is not invoked (a plain question it does not match), its gate does not run — the plugin does not change the agent's behaviour outside its own activation.
 
 ## License
 
