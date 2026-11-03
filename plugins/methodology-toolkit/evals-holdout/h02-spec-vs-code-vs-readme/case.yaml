@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: h02-spec-vs-code-vs-readme
+context:
+  scaffold_script: scaffold.sh

@@ -10,24 +10,22 @@ This skill activates structured analytical methods when a task is non-trivial. T
 
 ## Operating Protocol
 
-### Step 1 — Read the methodology index
+Method cards live one per file in `${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/references/<slug>.md`; `references/methods.json` lists every slug, its display name and aliases. Nothing is read before Step 3 picks the methods — routing happens from this file.
 
-Open `${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/methodology.md`. This is the authoritative library with `use_when`, `avoid_when`, `steps`, and `output` for each method. Do not rely on memory — the index may have been updated.
+### Step 1 — Classify the problem (Cynefin as dispatcher)
 
-### Step 2 — Classify the problem (Cynefin as dispatcher)
+Before selecting any method, place the problem in a Cynefin domain:
 
-Before selecting any other methodology, place the problem in a Cynefin domain:
-
-- **Clear / Simple** — known cause-effect, best practice exists. → **Exit the skill.** Answer directly. Methodologies are tax, not insurance, on trivial tasks. One thing survives the exit: a simple lookup of an external product fact ("what does X charge?", "does Y have SSO?") is still fetched from the owner's page and given with its source and date — never answered from memory.
+- **Clear / Simple** — known cause-effect, best practice exists. → **Exit the skill.** Answer directly; read no cards. Methodologies are tax, not insurance, on trivial tasks. The exit cancels the methodology, not honesty about facts: a simple lookup of an external product fact ("what does X charge?", "does Y have SSO?") is still fetched from the owner's page and given with its source and date — never answered from memory.
 - **Complicated** — knowable through analysis/expertise. → Analytical methods fit (First Principles, ACH, 5 Whys, ToC, Porter, PMESII).
 - **Complex** — cause-effect only visible in hindsight; requires probes. → Iteration methods fit (OODA, PDCA, Double Diamond, JTBD).
-- **Chaotic** — no clear cause-effect. → Act first to stabilize, then re-classify.
+- **Chaotic** — no clear cause-effect. → Stabilize first, then re-classify. Stabilizing actions are taken only within what the user has authorized; otherwise they are `[planned]` recommendations.
 
 State the classification in one line. If you can't classify, that itself is a signal — say so.
 
-### Step 2.5 — Evidence gate (load-bearing checkable claims)
+### Step 2 — Evidence gate (load-bearing checkable claims)
 
-This step runs **after** the Clear/Simple exit and **before** method selection — trivial tasks never reach it. If the task survived Step 2 **and** rests on a load-bearing claim that a source could confirm or refute, gate the claim before any method consumes it. Two kinds of claim qualify:
+This step runs **after** the Clear/Simple exit and **before** method selection — trivial tasks never reach it. If the task survived Step 1 **and** rests on a load-bearing claim that a source could confirm or refute, gate the claim before any method consumes it. Two kinds of claim qualify:
 
 - **Code claims** — what a function returns, where a defect lives, what a command does, what the backend sends.
 - **Product / market claims** — what a competitor charges or ships, how many buyers exist, what users actually do, what a regulation or platform policy says.
@@ -36,7 +34,7 @@ This step runs **after** the Clear/Simple exit and **before** method selection �
 2. Tag its provenance — **Primary**, **Secondary**, or **Inferred** — using the column for its domain in the **Quality of Information Check** card. In short: for code, Primary is code you read, command output, git, tests; for product/market, Primary is the entity's own page opened this session or the user's own data, **with a date**. Anything recalled from training data is Inferred, however confident it feels. Provenance is not proof: check that the evidence supports _this exact claim_ (a green test proves only what it asserts; a doc page proves what the page says, not what applies today).
 3. Promote every load-bearing claim before it is used as a fact: run the read-only check, read the file, check git — or open the pricing page, the changelog, the filing, the analytics export. A claim that cannot be promoted stays a labelled `[hypothesis]`: methods may reason from it (that is how you decide what to check next), but no unconditional conclusion may rest on it. Without web access only public external facts become unverified — files and data the user supplied keep their provenance.
 
-This is **Quality of Information Check** applied at the door (see its card in the index). The gate validates the _inputs_ only — it does **not** produce the conclusion. "Claim verified" is not an answer; deciding _why_ the fact holds, _where_ the defect is, _which_ opportunity to pursue, and _what_ to do is still the methods' job (5 Whys, ACH, First Principles, JTBD, Assumption Mapping). If the task carries no checkable claim — the inputs are judgements about people, timing, or preference — skip the gate and go to Step 3.
+This is **Quality of Information Check** applied at the door (card: `references/quality-of-information-check.md` — open it when a conflict, a freshness question or a confidence call is not settled by the summary above). The gate validates the _inputs_ only — it does **not** produce the conclusion. "Claim verified" is not an answer; deciding _why_ the fact holds, _where_ the defect is, _which_ opportunity to pursue, and _what_ to do is still the methods' job (5 Whys, ACH, First Principles, JTBD, Assumption Mapping). If the task carries no checkable claim — the inputs are judgements about people, timing, or preference — skip the gate and go to Step 3.
 
 When the task is product or market research, the gate is not a one-off check: run the **Research mode** below, which wraps the gate and Steps 3–5.
 
@@ -54,32 +52,93 @@ Gate skipped (no checkable claim): "How should I sequence telling the team, the 
 
 ### Step 3 — Select 1–3 methodologies
 
-Match to (Cynefin domain) × (task type). Common pairings:
+Match (Cynefin domain) × (task type) on this map. The slug is the card file you will open in Step 4.
 
-| Task type                    | Default candidates                  |
-| ---------------------------- | ----------------------------------- |
-| Decision under time pressure | OODA, First Principles, Schwerpunkt |
-| Decision under uncertainty   | OODA, ACH, Pre-mortem               |
-| Prioritization               | Eisenhower, Schwerpunkt, ToC, OKR   |
-| Root cause                   | 5 Whys, ToC, ACH                    |
-| Competitive analysis         | Porter, SWOT/TOWS, JTBD             |
-| Environment assessment       | PMESII, SWOT, Cynefin               |
-| User/customer discovery      | JTBD, Mom Test, Double Diamond      |
-| What to build next           | Opportunity Solution Tree, JTBD     |
-| Validate a product bet       | Assumption Mapping, Pre-mortem      |
-| Market size / opportunity    | Market Sizing (bottom-up), Porter   |
-| Communication                | Minto, SCQA, SMEAC                  |
-| Negotiation                  | BATNA, Thomas-Kilmann               |
-| Org change                   | ADKAR, Kotter, PDCA                 |
-| Plan stress test             | Red Team, ACH, Pre-mortem           |
-| System improvement           | PDCA, ToC, OKR                      |
-| Bias check                   | System 1/2, ACH, Red Team           |
+| Task type                       | Default candidates (slug)                                                        |
+| ------------------------------- | -------------------------------------------------------------------------------- |
+| Decide under time pressure      | OODA `ooda` · First Principles `first-principles` · Schwerpunkt `schwerpunkt`     |
+| Decide under uncertainty        | OODA `ooda` · ACH `ach` · Pre-mortem `pre-mortem`                                 |
+| Prioritize                      | Eisenhower `eisenhower` · Schwerpunkt `schwerpunkt` · ToC `theory-of-constraints` · OKR `okr` |
+| Diagnose root cause             | 5 Whys `5-whys` · ACH `ach` · ToC `theory-of-constraints`                         |
+| Analyze competition             | Porter `porter-5-forces` · SWOT/TOWS `swot-tows` · JTBD `jtbd`                    |
+| Map environment                 | PMESII `pmesii` · SWOT/TOWS `swot-tows`                                           |
+| Discover user needs             | JTBD `jtbd` · Mom Test `mom-test` · Double Diamond `double-diamond`               |
+| Find product opportunities      | Opportunity Solution Tree `opportunity-solution-tree` · JTBD `jtbd`               |
+| De-risk a product bet           | Assumption Mapping `assumption-mapping` · Pre-mortem `pre-mortem`                 |
+| Size a market                   | Market Sizing `market-sizing` · Porter `porter-5-forces`                          |
+| Communicate to an audience      | Minto `minto` · SCQA `scqa` · SMEAC `smeac`                                       |
+| Negotiate                       | BATNA `batna` · Thomas-Kilmann `thomas-kilmann`                                   |
+| Drive org change                | ADKAR `adkar` · Kotter `kotter` · PDCA `pdca`                                     |
+| Stress-test a plan              | Red Team `red-team` · ACH `ach` · Pre-mortem `pre-mortem` · Devil's Advocacy `sat` |
+| Improve a system                | PDCA `pdca` · ToC `theory-of-constraints` · OKR `okr`                             |
+| Multi-lens analysis             | Mental Models `mental-models` · First Principles `first-principles`               |
+| Catch your own bias             | System 1/2 `system-1-2` · ACH `ach` · Red Team `red-team`                         |
+| Personal task triage            | GTD `gtd` · Eisenhower `eisenhower`                                               |
+| Verify a claim / weigh evidence | Quality of Information Check `quality-of-information-check` · ACH `ach`           |
 
-Justify each choice in one line: "Using X because [specific problem trait]." If you can't justify it, drop it.
+Justify each choice in one line: "Using X because [specific problem trait]." If you can't justify it, drop it. When two candidates both look plausible, decide with the distinctions below — do not open both cards to compare.
 
-### Step 4 — Apply explicitly, not nominally
+#### Telling neighbouring methods apart
 
-For each chosen method, walk through its `steps` field from the index visibly. The reader must see the structure: "OODA — Observe: [content]. Orient: [content with biases named]. Decide: [content]. Act: [content]." If you only name the method, you have failed. When you pick more than one method, this applies to _each_ of them — don't apply the steps to the first and merely name the rest.
+**Decomposition / "what's actually going on"**
+
+- **Cynefin** — classify the problem domain _first_, before picking any decomposition method.
+- **First Principles** — strip assumptions and rebuild from base facts. Use when conventional wisdom dominates and you suspect path-dependency.
+- **5 Whys** — find the proximate cause in a mechanical/operational chain. Use for incidents and defects. Weakens past 2–3 levels on human/political problems.
+- **Theory of Constraints** — find the single bottleneck in a throughput system. Use when there's flow (manufacturing, pipeline, funnel).
+
+**Stress-testing a plan or hypothesis**
+
+- **Red Team Analysis** — adversarial position; find exploits. Use when there's an actual opponent (competitor, attacker, hostile reviewer).
+- **Pre-mortem** — imagine the plan already failed; work backwards to causes. Use against your own optimism bias on a plan you authored.
+- **ACH** — list competing hypotheses; eliminate by disconfirming evidence. Use when multiple plausible explanations exist and you suspect motivated reasoning.
+- **Devil's Advocacy (SAT)** — steelman the strongest counter-position. Use against groupthink in a team setting.
+
+**Communication**
+
+- **Minto Pyramid** — document structure (conclusion → arguments → evidence). Use for written memos and recommendations.
+- **SCQA** — narrative opening (situation → complication → question → answer). Use to _open_ a doc or presentation; Minto follows.
+- **SMEAC** — mission briefing under uncertainty. Use when handing off _action_, not delivering analysis.
+
+**Prioritization**
+
+- **Eisenhower Matrix** — personal triage by urgency × importance. Use for backlogs.
+- **Schwerpunkt** — concentrate force on one point, starve the rest. Use when resources are insufficient for everything and you need a breakthrough.
+- **Theory of Constraints** — optimize the bottleneck of a throughput system. Use when the constraint is the priority.
+- **OKR** — align teams on outcomes. Use for quarterly/team-level goal setting, not individual task triage.
+
+**Change**
+
+- **ADKAR** — diagnose the individual stage of resistance ("why isn't person X adopting?"). Per-person tool.
+- **Kotter's 8 Steps** — drive large org transformation across multiple teams. Heavyweight, multi-quarter.
+- **PDCA** — validate a change at small scale before scaling. Use for process improvement, not strategic direction.
+
+**Environment / competitive analysis**
+
+- **Porter's 5 Forces** — industry attractiveness and where power sits in the value chain.
+- **SWOT + TOWS** — strategy synthesis from internal+external inventory. _Never standalone_ — pair with Porter, JTBD, or PMESII as the data source.
+- **PMESII** — full multi-domain environment scan (political, military, economic, social, infrastructure, information). Use for unfamiliar contexts.
+- **JTBD** — why customers actually buy; what job your product is hired for. Use for product/segmentation, not industry structure.
+- **Market Sizing (bottom-up)** — how big the reachable revenue is, built from countable units. Use when a number will drive a go/no-go or an investment case; never quote a top-down "1% of a $XB market".
+
+**Product discovery**
+
+- **JTBD** — _what_ progress the customer is trying to make. The lens for reading demand; it produces the job, not a plan.
+- **Mom Test** — _how_ to collect evidence about that job from people without being lied to. Use whenever the input is interviews, survey answers, sales calls, or "users told us".
+- **Opportunity Solution Tree** — _where_ to act: ties one outcome to the customer opportunities and the candidate solutions and experiments under it. Use when the backlog is a feature list with no visible link to an outcome.
+- **Assumption Mapping** — _what to test first_: ranks the beliefs a bet rests on by importance × evidence. Use once a solution or strategy is on the table and you need the riskiest unknown, not more ideas.
+- **Double Diamond** — the end-to-end process frame (discover → define → develop → deliver). Use when the problem itself is still undefined; the four above slot into its phases.
+
+**Bias control / meta-cognition**
+
+- **System 1/2 (Kahneman)** — notice which mode is driving the conclusion. Use as a first-pass meta-check.
+- **ACH** — structural defense against confirmation bias when reasoning over evidence.
+- **Mental Models (Munger)** — multi-lens check for blind spots from a single discipline.
+- **Quality of Information Check** — before a conclusion relies on a fact, check it against evidence that supports that exact claim (code/git/command output; for product and market facts, the entity's own dated page or the user's own data), not docs or memory; weigh conflicting sources instead of crowning one. Defense against asserting from partial evidence.
+
+### Step 4 — Open the chosen cards and apply them explicitly, not nominally
+
+Open only the 1–3 cards you selected (`references/<slug>.md`) — never the whole library — and take each method's steps from its card, not from memory: the cards carry rules the generic versions of these methods lack. Walk through each card's **Steps** visibly. The reader must see the structure: "OODA — Observe: [content]. Orient: [content with biases named]. Decide: [content]. Act: [content]." If you only name the method, you have failed. When you pick more than one method, this applies to _each_ of them — don't apply the steps to the first and merely name the rest.
 
 Walking a step is not the same as completing it with invented content. Three rules keep the walk honest:
 
@@ -98,7 +157,7 @@ Where do the chosen methods agree? Where do they diverge? Give the user an actio
 
 ## Research mode (product and market questions)
 
-Runs when the user asks for product, market, competitor, pricing, or customer research — "research the competitors of X", "is there demand for Y", "how big is the market for Z", "what should we build next". Product facts live outside the codebase and decay fast, so this mode gathers and gates evidence _before_ any method consumes it. It wraps Steps 2.5–5; Cynefin (Step 2) still runs first.
+Runs when the user asks for product, market, competitor, pricing, or customer research — "research the competitors of X", "is there demand for Y", "how big is the market for Z", "what should we build next". Product facts live outside the codebase and decay fast, so this mode gathers and gates evidence _before_ any method consumes it. It wraps Steps 2–5; Cynefin (Step 1) still runs first.
 
 **R1 — Frame the decision.** One line: which decision does this research inform, and what finding would change it? If nothing depends on the answer, say so and narrow to a question the user can act on. State scope assumptions (segment, geography, time frame) and proceed; ask only when the ambiguity changes which sources to read (e.g. two companies share the name).
 
@@ -106,7 +165,7 @@ Runs when the user asks for product, market, competitor, pricing, or customer re
 
 **R3 — Gather from the source that owns each fact.** Pricing → the vendor's pricing page; features → its docs and changelog; scale → filings, official statistics, app-store listings; behaviour → the user's own analytics, tickets, interview notes. Search to find, then open the page — a search snippet is Secondary until the page is read. Every fact gets its URL and a date. When the facts span several entities or more than ~5 independent lookups, delegate the gathering to `evidence-scout` subagents in parallel (one per competitor or per question); they return sourced, tiered, dated facts and no conclusions. Without web tools, say so up front: public external facts you could not open stay unverified (never filled from memory) and become a checklist the user can run, while documents and data the user supplied keep their provenance within their own dates.
 
-**R4 — Gate.** Run Step 2.5 over everything gathered: tier, date, conflicts between sources. Label whatever didn't promote. For every claim about what users want, tag it as behaviour (did, paid, built a workaround) or opinion (likes, would, wants) — only behaviour counts as evidence of demand (Hard Rule "Stated preference is not demand"). This tag is part of the gate, not a method, and does not count toward the 3-method limit; run the full Mom Test only when interviews are the main evidence and you are planning or interpreting them.
+**R4 — Gate.** Run Step 2 over everything gathered: tier, date, conflicts between sources. Label whatever didn't promote. For every claim about what users want, tag it as behaviour (did, paid, built a workaround) or opinion (likes, would, wants) — only behaviour counts as evidence of demand (Hard Rule "Stated preference is not demand"). This tag is part of the gate, not a method, and does not count toward the 3-method limit; run the full Mom Test only when interviews are the main evidence and you are planning or interpreting them.
 
 **R5 — Apply methods (Steps 3–5) to the gated facts only.** Typical sets: competitor research → JTBD (what job each rival is hired for) + Porter or SWOT/TOWS; demand → JTBD + Mom Test; what to build → Opportunity Solution Tree + Assumption Mapping; sizing → Market Sizing (bottom-up). Same rules as everywhere: at most 3 methods, every step walked.
 
@@ -130,14 +189,17 @@ Applied (passes): R1 — the decision is whether to launch a $8/seat tier. R2 �
 - **"Not a regression" is not an acceptance criterion.** When Pre-mortem or Red Team surfaces a real defect, the default is to fix it — not to rationalize it. Comparing to prior broken behavior ("the original also had this", "no worse than before", "same as legacy") legitimizes shipping a known bug under methodological cover. The valid question is "what does correct look like?" — answered via First Principles — not "is this worse than current?". A defect inherited from the old code is still a defect.
 - **No product or market fact from memory.** Prices, plans, feature sets, user counts, and market sizes recalled from training data are Inferred and probably stale. Open the source, or label the fact unverified — never state it as current.
 - **Stated preference is not demand.** "Users said they want X" or "would pay" is opinion; what they did, paid for, or built as a workaround is evidence. Weight them differently and say which is which.
-- **No code claim without primary evidence.** On engineering tasks the Evidence gate (Step 2.5) is not optional — promote every load-bearing code claim before a conclusion rests on it, or carry it as a labelled `[hypothesis]`. The gate rejects unverified inputs as facts; it does not replace the methods that turn a verified fact into a decision. (Mechanics in the next rule.)
-- **Verify load-bearing claims before asserting them, not after.** When a conclusion rests on a specific fact — file content, a grep result, what a doc says, what a command will do — run the check _first_. Partial evidence (one file, one grep, prose in a `.md` doc or a `.d.ts`) is a hypothesis, not a conclusion: state it as "I need to verify X", verify, then conclude. A claim baked into an ACH evidence row or a First Principles base fact must be a _checked_ fact, or the method is corrupted. For what the code actually does, a relevant execution observation (code you read on the executed path, command output, a test that asserts that property) outweighs docs and comments for the observed case; for what the code is _supposed_ to do, a spec or contract is evidence in its own right — see **Quality of Information Check** in the index.
+- **No code claim without primary evidence.** On engineering tasks the Evidence gate (Step 2) is not optional — promote every load-bearing code claim before a conclusion rests on it, or carry it as a labelled `[hypothesis]`. The gate rejects unverified inputs as facts; it does not replace the methods that turn a verified fact into a decision. (Mechanics in the next rule.)
+- **Verify load-bearing claims before asserting them, not after.** When a conclusion rests on a specific fact — file content, a grep result, what a doc says, what a command will do — run the check _first_. Partial evidence (one file, one grep, prose in a `.md` doc or a `.d.ts`) is a hypothesis, not a conclusion: state it as "I need to verify X", verify, then conclude. A claim baked into an ACH evidence row or a First Principles base fact must be a _checked_ fact, or the method is corrupted. For what the code actually does, a relevant execution observation (code you read on the executed path, command output, a test that asserts that property) outweighs docs and comments for the observed case; for what the code is _supposed_ to do, a spec or contract is evidence in its own right — see `references/quality-of-information-check.md`.
 
 ## Double-pass pattern
 
-For non-trivial first-pass outputs — architecture decisions, fixes that touch multiple files, plans with unverified assumptions, recommendations made without reading the relevant code — consider explicitly re-invoking `/methodology-toolkit:method recheck` (or `/methodology-toolkit:method red-team <topic>`) on your own answer, or spawning the `red-team-critic` subagent for an independent adversarial pass.
+A second pass has two independent triggers — check both:
 
-Make this call deliberately, on the task's traits rather than on habit. Spawn `red-team-critic` when the decision is hard to reverse, touches money/auth/data integrity, or the first pass went unverified — an independent context catches what self-review rationalizes away. Stay inline (a `/methodology-toolkit:method recheck` on your own answer) when you can re-verify the claims yourself in a single pass. When the user drove this via the `method` command and the synthesis recommends a hard-to-reverse action, **offer** the red-team pass and let them decide rather than spawning silently (see the edge case in the `method` command); spawn on your own judgement only in autonomous flows where the user isn't in the loop turn-by-turn.
+- **Unverified inputs.** The first pass rests on claims you did not check. Go back to Step 2 and check them yourself (read the file, run the read-only check, open the page); a critic is not a substitute for evidence you can get directly.
+- **High cost of error.** The decision is hard to reverse or touches money, auth, data integrity or a public contract. This calls for the independent `red-team-critic` subagent **even when every input is verified** — an independent context catches what self-review rationalizes away. Brief it with the target, the acceptance criteria, constraints, the facts you checked and open questions; pass your own reasoning separately, labelled as the author's position to challenge.
+
+Decide on the task's traits, not on habit. When the user is in the loop (including via the `method` command), **offer** the critic pass on a hard-to-reverse recommendation and let them decide; spawn it on your own judgement only in autonomous flows. The critic is allowed to find nothing material — treat that as a result, not as a failed pass.
 
 The pattern: first pass is fast and speculative (good for surfacing direction); second pass via **Red Team + Pre-mortem + ACH** stress-tests the first pass against reality. The second pass is there to catch concrete failures the first pass missed — wrong file guess, missed edge case (pluralization, breakpoint, null state), assumption that wasn't verified, regression introduced by the fix.
 

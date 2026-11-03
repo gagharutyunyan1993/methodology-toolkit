@@ -22,6 +22,20 @@ the method's shape pushed the model to assert a root cause for a different quest
   degradation with local data, a green test that does not prove the claim.
 - `when_to_use` with EN/RU request phrasing; "words inside translated/quoted material are not a
   trigger".
+- **Holdout eval set** (`evals-holdout/`, 8 cases with new conditions and fixtures — misleading
+  changelog, spec vs code vs README, pricing region mismatch, correlation vs causation, forced
+  method that does not fit, refactor non-trigger, critic that must find a real risk, config
+  precedence). Never tuned against.
+- **`references/methods.json`** — one registry of method slugs, names and aliases used by the
+  command and checked in CI.
+- **`scripts/validate-skill.mjs`** (in CI): registry ↔ card files ↔ selection map ↔ card
+  references in agents and command; no model-version notes in runtime text; listing-text and
+  SKILL.md size budgets.
+
+### Removed
+- **`methodology.md`** (836 lines, read in full on every invocation, before the early exit).
+  Its 33 cards are now `references/<slug>.md`; its cheat sheet and disambiguation block moved
+  into `SKILL.md` as the single selection map — the duplicate, already diverged table is gone.
 
 ### Changed
 - **Skill description** rewritten for recall: unclear/disputed causes ("sometimes fails", "which
@@ -38,6 +52,18 @@ the method's shape pushed the model to assert a root cause for a different quest
   is replaced by one that stops at N = 2 with competing hypotheses and a discriminating check.
 - **Forced methods keep the Evidence gate** (`/methodology-toolkit:method <name>` skips only
   Cynefin and auto-selection).
+- **Protocol order:** classify and early-exit first with no file reads → evidence gate → select
+  from the map in `SKILL.md` → open only the 1–3 chosen cards. Steps renumbered 1–5 (the gate is
+  Step 2, formerly 2.5).
+- **`/methodology-toolkit:method` routes** are explicit: forced (`a+b+c`, max 3, resolved via
+  `methods.json`), `research [method]`, `recheck` (sends a decision, plan or conclusion to
+  `red-team-critic`; not for re-checking a single fact), auto. Unknown or ambiguous method tokens
+  get a list of the closest slugs instead of a guess. **Breaking:** `recheck` no longer means an
+  inline self-recheck.
+- **Second pass** has two independent triggers: unverified inputs → back to the gate yourself;
+  high cost of error → `red-team-critic` even with verified inputs (briefed with the author's
+  reasoning kept separate). The critic may find nothing material.
+- `red-team-critic` and `evidence-scout` read only their own cards instead of the whole library.
 - No-web degradation: only public external facts become unverified; user-supplied files keep
   their provenance.
 - Research confidence (High/Medium/Low) is defined for the conclusion, not by provenance alone.

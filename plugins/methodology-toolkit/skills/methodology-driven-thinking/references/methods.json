@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "methods": [
+    {
+      "slug": "ooda",
+      "name": "OODA Loop",
+      "file": "references/ooda.md",
+      "aliases": [
+        "ooda",
+        "ooda-loop"
+      ]
+    },
+    {
+      "slug": "pdca",
+      "name": "PDCA (Plan-Do-Check-Act)",
+      "file": "references/pdca.md",
+      "aliases": [
+        "pdca",
+        "plan-do-check-act"
+      ]
+    },
+    {
+      "slug": "cynefin",
+      "name": "Cynefin",
+      "file": "references/cynefin.md",
+      "aliases": [
+        "cynefin"
+      ]
+    },
+    {
+      "slug": "porter-5-forces",
+      "name": "5 Forces (Porter)",
+      "file": "references/porter-5-forces.md",
+      "aliases": [
+        "porter",
+        "5-forces",
+        "five-forces",
+        "porter-5-forces"
+      ]
+    },
+    {
+      "slug": "adkar",
+      "name": "ADKAR",
+      "file": "references/adkar.md",
+      "aliases": [
+        "adkar"
+      ]
+    },
+    {
+      "slug": "kotter",
+      "name": "Kotter's 8 Steps",
+      "file": "references/kotter.md",
+      "aliases": [
+        "kotter",
+        "kotter-8-steps"
+      ]
+    },
+    {
+      "slug": "first-principles",
+      "name": "First Principles",
+      "file": "references/first-principles.md",
+      "aliases": [
+        "first-principles"
+      ]
+    },
+    {
+      "slug": "5-whys",
+      "name": "5 Whys",
+      "file": "references/5-whys.md",
+      "aliases": [
+        "5-whys",
+        "five-whys"
+      ]
+    },
+    {
+      "slug": "eisenhower",
+      "name": "Eisenhower Matrix",
+      "file": "references/eisenhower.md",
+      "aliases": [
+        "eisenhower",
+        "eisenhower-matrix"
+      ]
+    },
+    {
+      "slug": "gtd",
+      "name": "GTD (Getting Things Done)",
+      "file": "references/gtd.md",
+      "aliases": [
+        "gtd",
+        "getting-things-done"
+      ]
+    },
+    {
+      "slug": "smeac",
+      "name": "SMEAC",
+      "file": "references/smeac.md",
+      "aliases": [
+        "smeac"
+      ]
+    },
+    {
+      "slug": "schwerpunkt",
+      "name": "Schwerpunkt",
+      "file": "references/schwerpunkt.md",
+      "aliases": [
+        "schwerpunkt"
+      ]
+    },
+    {
+      "slug": "mental-models",
+      "name": "Mental Models (Munger)",
+      "file": "references/mental-models.md",
+      "aliases": [
+        "mental-models",
+        "munger"
+      ]
+    },
+    {
+      "slug": "system-1-2",
+      "name": "System 1 / System 2 (Kahneman)",
+      "file": "references/system-1-2.md",
+      "aliases": [
+        "system-1-2",
+        "system-1",
+        "system-2",
+        "kahneman"
+      ]
+    },
+    {
+      "slug": "jtbd",
+      "name": "Jobs To Be Done (JTBD)",
+      "file": "references/jtbd.md",
+      "aliases": [
+        "jtbd",
+        "jobs-to-be-done"
+      ]
+    },
+    {
+      "slug": "double-diamond",
+      "name": "Double Diamond",
+      "file": "references/double-diamond.md",
+      "aliases": [
+        "double-diamond"
+      ]
+    },
+    {
+      "slug": "opportunity-solution-tree",
+      "name": "Opportunity Solution Tree",
+      "file": "references/opportunity-solution-tree.md",
+      "aliases": [
+        "opportunity-solution-tree",
+        "ost"
+      ]
+    },
+    {
+      "slug": "assumption-mapping",
+      "name": "Assumption Mapping",
+      "file": "references/assumption-mapping.md",
+      "aliases": [
+        "assumption-mapping"
+      ]
+    },
+    {
+      "slug": "mom-test",
+      "name": "Mom Test",
+      "file": "references/mom-test.md",
+      "aliases": [
+        "mom-test"
+      ]
+    },
+    {
+      "slug": "market-sizing",
+      "name": "Market Sizing (bottom-up)",
+      "file": "references/market-sizing.md",
+      "aliases": [
+        "market-sizing",
+        "tam",
+        "bottom-up-sizing"
+      ]
+    },
+    {
+      "slug": "theory-of-constraints",
+      "name": "Theory of Constraints (Goldratt)",
+      "file": "references/theory-of-constraints.md",
+      "aliases": [
+        "theory-of-constraints",
+        "toc",
+        "goldratt"
+      ]
+    },
+    {
+      "slug": "okr",
+      "name": "OKR",
+      "file": "references/okr.md",
+      "aliases": [
+        "okr",
+        "okrs"
+      ]
+    },
+    {
+      "slug": "minto",
+      "name": "Minto Pyramid",
+      "file": "references/minto.md",
+      "aliases": [
+        "minto",
+        "minto-pyramid",
+        "pyramid"
+      ]
+    },
+    {
+      "slug": "scqa",
+      "name": "SCQA",
+      "file": "references/scqa.md",
+      "aliases": [
+        "scqa"
+      ]
+    },
+    {
+      "slug": "batna",
+      "name": "BATNA",
+      "file": "references/batna.md",
+      "aliases": [
+        "batna"
+      ]
+    },
+    {
+      "slug": "thomas-kilmann",
+      "name": "Thomas-Kilmann",
+      "file": "references/thomas-kilmann.md",
+      "aliases": [
+        "thomas-kilmann",
+        "tki"
+      ]
+    },
+    {
+      "slug": "ach",
+      "name": "ACH (Analysis of Competing Hypotheses)",
+      "file": "references/ach.md",
+      "aliases": [
+        "ach",
+        "competing-hypotheses"
+      ]
+    },
+    {
+      "slug": "red-team",
+      "name": "Red Team Analysis",
+      "file": "references/red-team.md",
+      "aliases": [
+        "red-team",
+        "red-team-analysis"
+      ]
+    },
+    {
+      "slug": "pre-mortem",
+      "name": "Pre-mortem",
+      "file": "references/pre-mortem.md",
+      "aliases": [
+        "pre-mortem",
+        "premortem"
+      ]
+    },
+    {
+      "slug": "pmesii",
+      "name": "PMESII",
+      "file": "references/pmesii.md",
+      "aliases": [
+        "pmesii"
+      ]
+    },
+    {
+      "slug": "swot-tows",
+      "name": "SWOT + TOWS",
+      "file": "references/swot-tows.md",
+      "aliases": [
+        "swot",
+        "tows",
+        "swot-tows"
+      ]
+    },
+    {
+      "slug": "sat",
+      "name": "SAT (Structured Analytic Techniques)",
+      "file": "references/sat.md",
+      "aliases": [
+        "sat",
+        "structured-analytic-techniques",
+        "devils-advocacy",
+        "devil-advocacy"
+      ]
+    },
+    {
+      "slug": "quality-of-information-check",
+      "name": "Quality of Information Check",
+      "file": "references/quality-of-information-check.md",
+      "aliases": [
+        "quality-of-information-check",
+        "qoic",
+        "qic"
+      ]
+    }
+  ]
+}
