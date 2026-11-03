@@ -26,6 +26,9 @@ the method's shape pushed the model to assert a root cause for a different quest
   changelog, spec vs code vs README, pricing region mismatch, correlation vs causation, forced
   method that does not fit, refactor non-trigger, critic that must find a real risk, config
   precedence). Never tuned against.
+- **Trigger dev set** (`evals-triggers/`, 15 cases: 10 judgement calls resting on files, logs, data
+  exports, docs or vendor terms the user points to; 5 non-triggers — rename, summary, adding a
+  test, a CLI flag, a translation). Tuned against, unlike the holdout set.
 - **`references/methods.json`** — one registry of method slugs, names and aliases used by the
   command and checked in CI.
 - **`scripts/validate-skill.mjs`** (in CI): registry ↔ card files ↔ selection map ↔ card
@@ -59,8 +62,12 @@ the method's shape pushed the model to assert a root cause for a different quest
   into `SKILL.md` as the single selection map — the duplicate, already diverged table is gone.
 
 ### Changed
-- **Skill description** rewritten for recall: unclear/disputed causes ("sometimes fails", "which
-  version is right"), trade-off choices, research; explicit negative boundary.
+- **Skill description** rewritten for recall. It now leads with the case the skill missed most:
+  a verdict, decision or recommendation that rests on evidence the user points to ("see the
+  export — should we roll out?", "does the code match the docs", "which number to trust"), even
+  when reading the files looks like enough. On a smaller model the trigger dev set went from 1/30
+  to 25/30 with 0/15 false triggers, and the main suite's trigger cases from 3/9 to 8/9. Explicit negative boundary kept (syntax, translation,
+  summaries, renames, adding tests, routine fixes).
 - **Quality of Information Check rewritten.** Provenance is not a truth ranking; support is
   checked for the exact claim (a green test proves only what it asserts); hypotheses are allowed
   but never laundered into facts; conditional conclusions are allowed; conflicts resolved by
