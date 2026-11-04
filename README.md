@@ -73,8 +73,6 @@ Or just ask a hard question — the skill triggers itself. For an independent te
 - [Codebase diagnosis without guessing](examples/codebase-diagnosis.md) — bug-fix workflow grounded in primary evidence.
 - [Pricing research without memory](examples/product-research.md) — competitor pricing and demand research through Research mode.
 
-For external launch copy, see [Launch Posts](docs/launch-posts.md).
-
 ## Design philosophy
 
 Two failure modes this plugin is built to prevent:
