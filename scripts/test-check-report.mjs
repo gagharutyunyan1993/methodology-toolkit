@@ -3,7 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkText, reportFromTranscript, decide } from '../plugins/methodology-toolkit/hooks/check-report.mjs';
+import { checkText, reportFromTranscript, decide, redactForLog } from '../plugins/methodology-toolkit/hooks/check-report.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fx = (f) => readFileSync(join(here, 'fixtures', f), 'utf8');
@@ -53,5 +53,14 @@ const decisions = [
 ];
 for (const [name, result, ok] of decisions) if (!ok(result)) { failed++; console.error(`✗ decide: ${name} — got ${JSON.stringify(result)}`); }
 
+// The log keeps the shape of each error, never strings copied from the report.
+const logged = JSON.stringify(redactForLog([
+  ...checkText('critic', 'Here is my report, long enough for the parser message to cut it off mid-quote'),
+  ...checkText('critic', fx('critic-invalid.json')),
+  ...checkText('scout', fx('scout-invalid.json')),
+]));
+const leaks = ['Here is', 'extra', 'E9', 'F7'].filter((x) => logged.includes(x));
+if (leaks.length) { failed++; console.error(`✗ redactForLog leaks ${JSON.stringify(leaks)}: ${logged}`); }
+
 if (failed) process.exit(1);
-console.log(`✓ check-report: ${cases.length + 1 + extraction.length + decisions.length} cases`);
+console.log(`✓ check-report: ${cases.length + 2 + extraction.length + decisions.length} cases`);

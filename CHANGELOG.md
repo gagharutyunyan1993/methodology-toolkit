@@ -7,13 +7,49 @@ caveat that Claude Code plugins have no install-time version pinning — a `/plu
 silently pulls the latest. Version numbers here are a declarative boundary, not an
 enforced one. The `v1.0.0` git tag marks the frozen pre-evidence-gate state.
 
+## [2.0.1] — 2026-11-04
+
+Fixes from a documentation audit: docs brought in line with the v2 rules, one runtime
+contradiction resolved, and the report hook's logging made to match its promise.
+
+### Fixed
+- **Report hook log no longer keeps report content.** Contract errors quote values from the
+  report (key names, verdict, ids, the start of non-JSON text); they still go back to the
+  subagent for correction, but `report-checks.jsonl` now stores them with those values masked
+  (`redactForLog` in `hooks/check-report.mjs`, covered in `scripts/test-check-report.mjs`).
+- **`/methodology-toolkit:method` no longer offers the critic for "a plan committed without
+  reading the relevant code".** That contradicted the skill's double-pass rule: unread code is
+  read first (Step 2); the critic is for hard-to-reverse decisions, not a substitute for the check.
+- `evidence-scout`: a missing page date is a freshness gap reported in `gaps`, not the Inferred
+  tier — matching the Quality of Information Check card (freshness is separate from provenance).
+- `SKILL.md`: "nothing is read before Step 3" now says which card Step 2 may open; the Research
+  example's kill test has a concurrent control arm and is sized for the effect it must detect.
+- Examples follow the v2 rules: 5 Whys stops at the last evidenced link with labelled
+  hypotheses, unexecuted checks are `[planned]`, ACH tables label unchecked conditions as such
+  instead of "evidence", a finding resting on source count is no longer rated High, and the
+  pricing test has a matching baseline, a control arm and a sample size that can detect 6% → 10%.
+- `docs/why-methodology-toolkit.md`: 5 Whys example rewritten the same way; critic guidance,
+  scout output, card loading and the docs-vs-code rule match the current skill.
+- README: requirements (Node.js for the hook, web tools for the scout), a Development section
+  (CI scripts, eval suites, holdout rule), `recheck` usage, license wording that matches MIT,
+  the spec-vs-code nuance; the unsupported "tuned for Claude Opus 4.8" note removed (also from
+  `CITATION.cff`).
+- Manifests and `CITATION.cff` list the hook; `CITATION.cff` version and date updated.
+- `MAINTENANCE.md`: eval suites and the report-check log added to the review; undefined `core`
+  tier and the misplaced "SKILL.md anti-pattern guard" reference fixed.
+- 2.0.0 notes below: the doc-vs-code result read "10/10 each"; the saved runs show 6/6 per arm
+  (t02 and t05, 3 runs each, with and without the plugin).
+
+### Added
+- `scripts/check-refs.mjs` in CI: dangling Markdown links and paths.
+
 ## [2.0.0] — 2026-11-04
 
 **Results at release** (3 runs per case): main suite 41/42 on the default model and 42/42
-trigger-correct; on a smaller model the main suite's trigger cases went from 3/9 to 8/9 and the
+trigger-correct; on a smaller model (Sonnet) the main suite's trigger cases went from 3/9 to 8/9 and the
 trigger dev set from 1/24 to 23/24, with no false trigger in 24 non-trigger runs across both sets.
 Checking a README or config claim against code is answered correctly with or without the skill
-(10/10 each), so the skill is not required to fire there. On the untouched
+(6/6 each), so the skill is not required to fire there. On the untouched
 holdout set the smaller model with the plugin solves the correlation-vs-causation case 3/3 vs 1/3
 without it (it opens the data the user points to instead of answering from the summary); the
 other holdout cases score the same with and without the plugin.
@@ -193,7 +229,7 @@ Methods are the core; evidence is an amplifier. A separate `evidence-engineering
 will be reconsidered only when real cases appear where QoIC alone yields a useful decision
 without other methods.
 
-## [1.0.0]
+## [1.0.0] — 2026-05-30
 
 Initial release: `/method` command, auto-triggering methodology-driven-thinking skill, and
 red-team-critic subagent over a shared 29-method index.

@@ -49,32 +49,37 @@ be solved by intuition alone.
 
 Before concluding, promote load-bearing claims to primary evidence.
 
-| Claim | Starting tier | How to promote it |
-| --- | --- | --- |
-| The account page owns the crash | Inferred | Open the component and stack trace |
-| `profile` can be null | Inferred/secondary | Read API schema, mapper, and runtime fixture |
-| Optional chaining is sufficient | Inferred | Grep other profile readers and run tests |
-| Backend contract allows missing profile | Secondary until verified | Check OpenAPI/source handler or observed response |
+| Claim | Starting tier | How to promote it | Status |
+| --- | --- | --- | --- |
+| The account page owns the crash | Inferred | Open the component and stack trace | `[performed]` — trace: `AccountPage` reads `user.profile.name`, `profile = null` |
+| `profile` can be null | Inferred/secondary | Read API schema, mapper, and runtime fixture | `[planned]` |
+| Optional chaining is sufficient | Inferred | Grep other profile readers and run tests | `[planned]` |
+| Backend contract allows missing profile | Secondary until verified | Check OpenAPI/source handler or observed response | `[planned]` |
 
-The fix should wait until the important claims are checked.
+The fix waits until the claims it depends on are checked. Only the first row is
+established in this walk-through; everything below is labelled accordingly.
 
 ### 5 Whys while the chain stays mechanical
 
-1. **Why did the page crash?** Rendering accessed a missing nested field.
-2. **Why was the field missing?** The user object did not include a populated
-   profile.
-3. **Why did the UI receive that shape?** Either the API permits missing
-   profile, the mapper failed to normalize it, or auth/bootstrap returned a
-   partial object.
-4. **Why was that not caught?** The missing-profile state is absent from tests
-   or fixtures.
+1. **Why did the page crash?** Rendering dereferenced `profile.name` with
+   `profile = null` (evidence: the stack trace, row 1 above).
+2. **Why was `profile` null?** Not established. The chain stops at link 1.
+   `[hypothesis]` H1: the API permits a missing profile. H2: the mapper fails to
+   normalize it. H3: auth/bootstrap returns a partial object.
 
-At this point, the next step is not another invented "why." The chain branches,
-so switch to evidence gathering or ACH.
+Whether tests cover the missing-profile state is a separate question, also
+unchecked. The chain branches here, so the next step is not another invented
+"why" but evidence gathering, organised by ACH.
 
 ### ACH: competing root-cause hypotheses
 
-| Hypothesis | Consistent evidence | Evidence that would disconfirm it |
+None of the cells below is observed yet: they are the conditions each
+hypothesis predicts and the observations that would rule it out — the
+checklist for the `[planned]` rows above. Once they are checked, each cell
+becomes consistent (C) or inconsistent (I), and the hypothesis with the fewest
+inconsistencies survives.
+
+| Hypothesis | Would be consistent with | Would disconfirm it |
 | --- | --- | --- |
 | UI null-state bug | Only account page crashes; API explicitly allows `profile: null` | Other screens crash too; design requires profile before account page |
 | Mapper normalization bug | Raw API has nullable profile but app model expects non-null fields | Mapper already emits a safe empty profile object |

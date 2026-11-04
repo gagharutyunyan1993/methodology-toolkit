@@ -27,7 +27,7 @@ Use the **Quality of Information Check** tiers from `${CLAUDE_PLUGIN_ROOT}/skill
 
 - **Primary** — the entity's own source for its own terms (prices, plan limits, features, policy), opened this session; or the user's own data.
 - **Secondary** — third-party coverage, analyst reports, review sites, comparison blogs, search snippets, AI summaries; and the entity's claims about its own performance or adoption, tagged **self-reported**.
-- **Inferred** — anything undated, unverifiable, or extrapolated.
+- **Inferred** — anything unverifiable or extrapolated. A missing page date is a freshness gap, not a tier: the fact keeps its tier and the currency check goes into `gaps`.
 </tiers>
 
 <output_structure>

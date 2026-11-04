@@ -1,4 +1,4 @@
-cff-version: 1.2.0
+cff-version: 2.0.1
 title: "methodology-toolkit — structured decision-making for Claude Code"
 message: "If you use this plugin or build on its ideas, please cite it."
 type: software
@@ -10,7 +10,7 @@ repository-code: "https://github.com/gagharutyunyan1993/methodology-toolkit"
 url: "https://github.com/gagharutyunyan1993/methodology-toolkit"
 license: MIT
 version: 1.2.0
-date-released: 2026-11-03
+date-released: 2026-11-04
 keywords:
   - methodology
   - decision-making
@@ -20,8 +20,8 @@ keywords:
 abstract: >-
   A Claude Code plugin bundling the /methodology-toolkit:method slash command,
   an auto-triggering methodology-driven-thinking skill with an evidence-gated
-  product-research mode, red-team-critic and evidence-scout subagents,
-  over a shared index of 33 analytical frameworks. The design enforces
+  product-research mode, red-team-critic and evidence-scout subagents and
+  a hook that checks their reports, over a shared index of 33 analytical frameworks. The design enforces
   that methods are applied explicitly (every step walked through) rather than
   named, with verify-before-assert discipline and deliberate adversarial
-  double-pass review. Tuned for Claude Opus 4.8 prompting best practices.
+  double-pass review.

@@ -78,8 +78,10 @@ Primary evidence means things like:
 - git history;
 - observed runtime behavior.
 
-Docs, comments, and memory can be useful, but they are not the final authority
-when the code or command output says otherwise.
+Docs, comments, and memory can be useful, but for what the code actually does
+they are not the final authority when the code or command output says
+otherwise. For what the code is supposed to do, a spec or contract is evidence
+in its own right — code that disagrees with it may be the defect.
 
 ![I Should Buy a Boat Cat meme: "no test, no grep, no proof" / "i should ship it anyway"](images/meme-confident-wrongness.png)
 
@@ -87,7 +89,8 @@ when the code or command output says otherwise.
 
 ## What the Plugin Actually Adds
 
-`methodology-toolkit` bundles four pieces that share one methodology index.
+`methodology-toolkit` bundles four pieces that share one methodology index,
+plus a small hook that checks the subagents' reports.
 
 The first is the `methodology-driven-thinking` skill. It can activate on
 non-trivial tasks like architecture decisions, prioritization, root-cause
@@ -111,18 +114,20 @@ assumptions, failure modes, attack paths, and disconfirming evidence.
 
 The fourth is the `evidence-scout` subagent, its mirror image. For product and
 market research it goes to the source that owns each fact — a competitor's
-pricing page, a changelog, a filing — and returns a table of values with URLs,
-dates, and source tiers. It draws no conclusions and never fills a gap from
-memory; a fact it cannot find comes back as `NOT FOUND`.
+pricing page, a changelog, a filing — and returns one strict JSON report: each
+value with its source, tier, dates, and a verbatim quote. It draws no
+conclusions and never fills a gap from memory; a fact it cannot find comes back
+under `not_found`, with where it looked.
 
 The shared index currently contains 33 methods, including Cynefin, OODA, PDCA,
 First Principles, 5 Whys, Porter, ADKAR, JTBD, Theory of Constraints, OKR,
 Opportunity Solution Tree, Mom Test, Minto, BATNA, ACH, Red Team, Pre-mortem,
 PMESII, SWOT/TOWS, SAT, and Quality of Information Check.
 
-The number is not the point. The point is that each method has explicit
-`use_when`, `avoid_when`, `steps`, and expected output. The agent is instructed
-to read that index instead of relying on memory.
+The number is not the point. The point is that each method has an explicit
+card — when to use it, when to avoid it, its steps, and the expected output.
+The agent picks one to three methods from a selection map and opens only those
+cards, taking the steps from the card instead of from memory.
 
 ## Design Choice 1: Classify Before Applying
 
@@ -182,13 +187,17 @@ opponent would exploit, which assumptions carry the most weight, and what
 evidence would change the decision.
 
 This is intentionally not run silently for every task. Independent critique has
-a cost. The toolkit encourages it when decisions are hard to reverse, touch
-money, auth, data integrity, security, or when the first answer was not grounded
-in verified evidence.
+a cost. The toolkit encourages it when decisions are hard to reverse or touch
+money, auth, data integrity, or security. When the first answer rests on facts
+nobody checked, the fix is cheaper: go back and check them. A critic is not a
+substitute for reading the file yourself.
+
+The critic is also allowed to find nothing. An honest "no confirmed material
+defects" is a valid result; inventing defects to fill the report is the failure.
 
 ![Grumpy Cat meme: "your brilliant plan" / "will fail"](images/meme-redteam.png)
 
-*The `red-team-critic` does not balance the positives. That is the point.*
+*The `red-team-critic` does not balance the positives — and it does not invent negatives either.*
 
 ## Example: Architecture Decision
 
@@ -232,19 +241,26 @@ user?.profile?.name
 That may be correct. It may also hide the real defect.
 
 With the toolkit, 5 Whys is only appropriate while the causal chain stays
-mechanical:
+mechanical — and every link has to carry its evidence:
 
-1. Why did the page crash? Rendering accessed a missing field.
-2. Why was the field missing? The API returned no profile object.
-3. Why did the API return no profile? The session was partially expired.
-4. Why did that state reach the UI? The auth refresh path did not normalize the
-   response.
+1. Why did the page crash? The stack trace shows rendering dereferenced
+   `profile.name` with `profile = null` (evidence: the trace).
+2. Why was `profile` null? The API client maps the observed HTTP 204 to `null`
+   and passes it on unchanged (evidence: the client code and the same request's
+   trace).
+3. Why did the server return 204? Unknown yet. `[hypothesis]` H1: the session
+   was expired. H2: the profile row is missing.
 
-At that point, the patch may belong in the auth/data layer, not the component.
+The established chain stops at link 2. It does not get a third and fourth "why"
+just because the method is called *five* whys. The next step is a `[planned]`
+check that separates H1 from H2 — replay the request with a valid and an expired
+session, with and without a profile row — and only then is it decided whether
+the patch belongs in the auth/data layer or the component.
 
 The Quality of Information Check matters here. The agent should read the
 component, grep the callers, inspect the API mapper, and run the relevant test
-before deciding where the fix belongs.
+before deciding where the fix belongs. "Root cause undetermined from this data"
+is a complete answer; a confident root cause for a different question is not.
 
 ## What This Does Not Solve
 

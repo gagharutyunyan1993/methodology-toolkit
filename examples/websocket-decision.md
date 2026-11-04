@@ -42,15 +42,23 @@ client behavior, and operational cost.
    - User count and concurrency profile.
    - Current polling interval, request cost, cache behavior, and backend load.
    - Failure behavior: what happens when a client disconnects or sleeps?
-3. **Verified implication:** "real-time" is not a transport requirement. It is
-   a product requirement that must be translated into latency, directionality,
-   durability, and operational constraints.
+3. **Verify each base fact.** None is known from the prompt alone, so each one
+   is `[planned]`: read the polling config and request metrics, ask the product
+   owner for per-widget freshness, check the proxy/load-balancer docs and
+   config. What the decomposition already shows, before any check: "real-time"
+   is not a transport requirement. It is a product requirement that must be
+   translated into latency, directionality, durability, and operational
+   constraints.
 4. **Rebuild from base facts:** choose the smallest transport that satisfies the
    actual product requirement.
 
 ### ACH: competing hypotheses
 
-| Hypothesis | Supporting evidence | Disconfirming evidence to seek |
+Nothing here is observed yet: the middle column lists conditions under which an
+option fits, not evidence that it does. Once the base facts above are checked,
+each condition becomes consistent (C) or inconsistent (I) with each option.
+
+| Hypothesis | Fits if (to check) | Disconfirming evidence to seek |
 | --- | --- | --- |
 | Keep/tune polling | Current system is simple; freshness may only need 15-30s; CDN/cache may absorb cost | Users need updates within 1-2s; polling load is already a measured bottleneck |
 | Move to SSE | Updates are server-to-client; lower operational complexity than WebSocket | Client must send frequent interactive messages; infra/proxy stack handles SSE poorly |
@@ -87,7 +95,8 @@ Use **WebSocket** when the feature genuinely requires bidirectional,
 low-latency interaction and the team is ready to own reconnects, fanout,
 backpressure, auth refresh, and observability.
 
-Before committing, verify:
+The recommendation is conditional on those checks; none of them has been run
+in this walk-through. Before committing, verify:
 
 - current polling interval and request cost;
 - required freshness per dashboard widget;
