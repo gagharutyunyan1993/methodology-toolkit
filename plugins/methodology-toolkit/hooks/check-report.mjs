@@ -2,11 +2,13 @@
 // Deterministic contract checks for the plugin's subagent reports (red-team-critic, evidence-scout).
 //
 // Two uses:
-//   1. SubagentStop hook (observe mode): reads the hook payload on stdin, validates the subagent's
-//      final message if it is one of ours, appends {time, agent, ok, errors} to
-//      <plugin-data-dir>/report-checks.jsonl. Never blocks, never logs report content.
+//   1. Hook (PreToolUse on the subagent hand-back tool, and SubagentStop for runtimes that return the
+//      report as the final message): validates the report of red-team-critic / evidence-scout. On a
+//      contract violation the subagent is sent back once to fix it (MAX_RETRIES); after that the report
+//      passes as is. Every check is logged as {time, event, agent, attempt, ok, retry, errors} to
+//      <plugin-data-dir>/report-checks.jsonl — never the report content.
 //   2. CLI for tests/CI:  node check-report.mjs --check <critic|scout> <file.json>
-import { readFileSync, appendFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, appendFileSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -119,21 +121,78 @@ export function checkText(kind, text) {
 
 const AGENTS = { 'red-team-critic': 'critic', 'evidence-scout': 'scout' };
 
+// The subagent's final report: `last_assistant_message` when the payload carries it; otherwise the
+// last hand-back tool call (its `message` input) or, failing that, the last assistant text in the
+// subagent transcript.
+export function reportFromTranscript(jsonl) {
+  const entries = String(jsonl ?? '').split('\n').filter(Boolean).map((l) => { try { return JSON.parse(l); } catch { return null; } });
+  const assistant = entries.filter((e) => e?.type === 'assistant' && Array.isArray(e.message?.content)).reverse();
+  for (const e of assistant) {
+    const handback = e.message.content.find((b) => b.type === 'tool_use' && /handback/i.test(b.name ?? '') && typeof b.input?.message === 'string');
+    if (handback) return handback.input.message;
+  }
+  for (const e of assistant) {
+    const text = e.message.content.filter((b) => b.type === 'text').map((b) => b.text).join('');
+    if (text.trim()) return text;
+  }
+  return null;
+}
+
+function finalReport(payload) {
+  if (typeof payload.last_assistant_message === 'string' && payload.last_assistant_message.trim()) return { report: payload.last_assistant_message, via: 'message' };
+  if (!payload.agent_transcript_path) return { report: null, via: 'none' };
+  try {
+    const jsonl = readFileSync(payload.agent_transcript_path, 'utf8');
+    return { report: reportFromTranscript(jsonl), via: /"name":"[^"]*[Hh]andback"/.test(jsonl) ? 'handback' : 'transcript' };
+  } catch { return { report: null, via: 'none' }; }
+}
+
+const MAX_RETRIES = 1;
+const retryReason = (errors) => `Your report does not match the output contract in your instructions: ${errors.slice(0, 10).join('; ')}. Send the complete corrected report as one JSON object, nothing else.`;
+
+// Pure decision for one hook event. `priorRetries` = how many times this agent run was already sent
+// back. Returns { kind, errors, retry, output } or null when the event is not ours / nothing to do.
+export function decide(payload, priorRetries = 0) {
+  const kind = AGENTS[String(payload.agent_type ?? '').split(':').pop()];
+  if (!kind) return null;
+  if (payload.hook_event_name === 'PreToolUse') {
+    // The report is checked before it is handed back, so a contract violation can still be fixed.
+    if (!/handback/i.test(payload.tool_name ?? '') || typeof payload.tool_input?.message !== 'string') return null;
+    const errors = checkText(kind, payload.tool_input.message);
+    const retry = errors.length > 0 && priorRetries < MAX_RETRIES;
+    return { kind, errors, retry, output: retry ? { hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'deny', permissionDecisionReason: retryReason(errors) } } : null };
+  }
+  if (payload.hook_event_name === 'SubagentStop') {
+    const { report, via } = finalReport(payload);
+    if (via === 'handback') return null; // already checked at PreToolUse
+    const errors = report === null ? ['final report not found in hook payload or agent transcript'] : checkText(kind, report);
+    const retry = errors.length > 0 && report !== null && !payload.stop_hook_active && priorRetries < MAX_RETRIES;
+    return { kind, errors, retry, output: retry ? { decision: 'block', reason: retryReason(errors) } : null };
+  }
+  return null;
+}
+
 async function hookMain() {
   let raw = '';
   for await (const chunk of process.stdin) raw += chunk;
   let payload;
   try { payload = JSON.parse(raw); } catch { return; }
-  const type = String(payload.agent_type ?? '').split(':').pop();
-  const kind = AGENTS[type];
-  if (!kind) return;
-  const errors = checkText(kind, payload.last_assistant_message);
   const dataDir = process.argv[2];
-  if (!dataDir) return;
-  try {
-    mkdirSync(dataDir, { recursive: true });
-    appendFileSync(join(dataDir, 'report-checks.jsonl'), JSON.stringify({ time: new Date().toISOString(), agent: type, ok: errors.length === 0, errors: errors.slice(0, 20) }) + '\n');
-  } catch { /* observe mode: never fail the session */ }
+  const counter = dataDir && payload.agent_id ? join(dataDir, 'retries', `${String(payload.agent_id).replace(/[^\w-]/g, '')}.count`) : null;
+  let prior = 0;
+  try { if (counter) prior = Number(readFileSync(counter, 'utf8')) || 0; } catch { /* first attempt */ }
+  // Without a place to count retries, never send a report back: a loop is worse than a bad report.
+  const result = decide(payload, counter ? prior : MAX_RETRIES);
+  if (!result) return;
+  if (dataDir) {
+    try {
+      mkdirSync(join(dataDir, 'retries'), { recursive: true });
+      if (result.retry) writeFileSync(counter, String(prior + 1));
+      else if (counter) rmSync(counter, { force: true }); // the report goes through: this run is done
+      appendFileSync(join(dataDir, 'report-checks.jsonl'), JSON.stringify({ time: new Date().toISOString(), event: payload.hook_event_name, agent: payload.agent_type, attempt: prior + 1, ok: result.errors.length === 0, retry: result.retry, errors: result.errors.slice(0, 20) }) + '\n');
+    } catch { /* never fail the session over logging */ }
+  }
+  if (result.output) process.stdout.write(JSON.stringify(result.output));
 }
 
 const isMain = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);

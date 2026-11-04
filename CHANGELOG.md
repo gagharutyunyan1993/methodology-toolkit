@@ -11,7 +11,9 @@ enforced one. The `v1.0.0` git tag marks the frozen pre-evidence-gate state.
 
 **Results at release** (3 runs per case): main suite 41/42 on the default model and 42/42
 trigger-correct; on a smaller model the main suite's trigger cases went from 3/9 to 8/9 and the
-trigger dev set from 1/30 to 25/30, with no false trigger in 24 non-trigger runs across both sets. On the untouched
+trigger dev set from 1/24 to 23/24, with no false trigger in 24 non-trigger runs across both sets.
+Checking a README or config claim against code is answered correctly with or without the skill
+(10/10 each), so the skill is not required to fire there. On the untouched
 holdout set the smaller model with the plugin solves the correlation-vs-causation case 3/3 vs 1/3
 without it (it opens the data the user points to instead of answering from the summary); the
 other holdout cases score the same with and without the plugin.
@@ -33,19 +35,24 @@ the method's shape pushed the model to assert a root cause for a different quest
   changelog, spec vs code vs README, pricing region mismatch, correlation vs causation, forced
   method that does not fit, refactor non-trigger, critic that must find a real risk, config
   precedence). Never tuned against.
-- **Trigger dev set** (`evals-triggers/`, 15 cases: 10 judgement calls resting on files, logs, data
-  exports, docs or vendor terms the user points to; 5 non-triggers — rename, summary, adding a
-  test, a CLI flag, a translation). Tuned against, unlike the holdout set.
+- **Trigger dev set** (`evals-triggers/`, 15 cases: 8 judgement calls resting on files, logs, data
+  exports, docs or vendor terms the user points to; 2 doc-vs-code checks graded on the answer only;
+  5 non-triggers — rename, summary, adding a test, a CLI flag, a translation). Tuned against,
+  unlike the holdout set.
 - **`references/methods.json`** — one registry of method slugs, names and aliases used by the
   command and checked in CI.
 - **`scripts/validate-skill.mjs`** (in CI): registry ↔ card files ↔ selection map ↔ card
   references in agents and command; no model-version notes in runtime text; listing-text and
   SKILL.md size budgets.
-- **`hooks/check-report.mjs` + `hooks/hooks.json`** — a `SubagentStop` hook in **observe mode**:
-  validates the critic's and scout's JSON reports against their contracts and appends
-  `{time, agent, ok, errors}` to `report-checks.jsonl` in the plugin data directory. Never blocks,
-  never logs report content. Blocking comes later, only for rules with a measured low false-positive
-  rate. Tested in CI (`scripts/test-check-report.mjs`).
+- **Report contract gate** (`hooks/check-report.mjs` + `hooks/hooks.json`). A `PreToolUse` hook
+  on the subagent hand-back checks the critic's and scout's JSON report *before* it reaches the
+  caller; on a contract violation the subagent gets the list of errors and resends once, then the
+  report passes as is (no loops; no counter → no retry). A `SubagentStop` hook does the same for
+  runtimes that return the report as the final message. Each check is logged as
+  `{time, event, agent, attempt, ok, retry, errors}` to `report-checks.jsonl` in the plugin data
+  directory — never the report content. Measured on 18 real critic/scout runs: 2 contract
+  violations (malformed JSON, missing `checks[].status`), both genuine, no false positives; the
+  retry path was verified live. Tested in CI (`scripts/test-check-report.mjs`, 15 cases).
 
 ### Changed (breaking)
 - **`red-team-critic` returns one strict JSON object** (`schema_version` 1): `verdict`
@@ -63,6 +70,13 @@ the method's shape pushed the model to assert a root cause for a different quest
   the quote support the exact claim for the right plan, region and period), re-open a source only
   when it does not or sources conflict, then a small spot-check as QA.
 
+### Not done (deliberately)
+- **No persisted research state.** Writing questions, claims and evidence to a file outside the
+  project would add a permission prompt to every research run, and no eval can show the benefit
+  (context loss on compaction does not occur in eval-length runs). The scouts' JSON reports and the
+  final research report already carry every fact with its source. Revisit if real long research
+  sessions lose facts.
+
 ### Removed
 - **`methodology.md`** (836 lines, read in full on every invocation, before the early exit).
   Its 33 cards are now `references/<slug>.md`; its cheat sheet and disambiguation block moved
@@ -72,8 +86,8 @@ the method's shape pushed the model to assert a root cause for a different quest
 - **Skill description** rewritten for recall. It now leads with the case the skill missed most:
   a verdict, decision or recommendation that rests on evidence the user points to ("see the
   export — should we roll out?", "does the code match the docs", "which number to trust"), even
-  when reading the files looks like enough. On a smaller model the trigger dev set went from 1/30
-  to 25/30 with 0/15 false triggers, and the main suite's trigger cases from 3/9 to 8/9. Explicit negative boundary kept (syntax, translation,
+  when reading the files looks like enough. On a smaller model the trigger dev set went from 1/24
+  to 23/24 with 0/15 false triggers, and the main suite's trigger cases from 3/9 to 8/9. Explicit negative boundary kept (syntax, translation,
   summaries, renames, adding tests, routine fixes).
 - **Quality of Information Check rewritten.** Provenance is not a truth ranking; support is
   checked for the exact claim (a green test proves only what it asserts); hypotheses are allowed
