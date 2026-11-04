@@ -54,7 +54,8 @@ that small teams pay for a workaround today.
    Claims: entry price, free-tier existence, seat cap — per rival.
 2. Do small teams pay for this job today?
    Claims: share of small-team interviewees with a paid workaround; trial-to-paid
-   conversion of teams of 2–10 in our own data.
+   conversion of teams of 4–10 (the seat range the plan would target) in our
+   own data.
 
 ### R3 — Gather (three `evidence-scout` agents in parallel, one per rival)
 
@@ -67,7 +68,7 @@ that small teams pay for a workaround today.
 
 Our own data, read directly: 9 of 14 small-team interview notes describe a paid
 workaround (a spreadsheet consultant, a BI seat); trial-to-paid for teams of
-2–10 is 6% vs 14% for larger teams over the last two quarters.
+4–10 is 6% vs 14% for larger teams over the last two quarters.
 
 ### R4 — Gate
 
@@ -86,7 +87,7 @@ analyst. Friction: Rival B's free tier stops at 3 seats; spreadsheets break
 at month-end. → The job is real, and teams of 4–10 sit in a gap: too big for
 Rival B's free plan, too small to justify Rival A.
 
-**Assumption Mapping.** Bet: a $8/seat plan for teams of 4–10 lifts small-team
+**Assumption Mapping.** Bet: a $8/seat plan for teams of 4–10 lifts their
 trial-to-paid from 6% to 10%.
 
 | Belief | Type | Importance | Evidence |
@@ -107,8 +108,10 @@ than onboarding, is what stops small teams from converting.
 
 **Findings.**
 
-1. Teams of 4–10 are underserved on price — **High** (two rival pricing pages,
-   2026-10-02).
+1. Teams of 4–10 face a price gap between Rival B's free tier and Rival A's
+   entry price — **Medium** (both pricing pages are Primary and current,
+   2026-10-02, but "underserved" also needs no other offer covering 4–10 seats,
+   and Rival C's price is unknown).
 2. Small teams pay for this job today — **Medium** (9 of 14 interviews; one
    source type).
 3. Price is the conversion blocker — **Low** (no data).
@@ -116,9 +119,17 @@ than onboarding, is what stops small teams from converting.
 **What we don't know.** Why small-team trials don't convert (would flip the
 bottom line); Rival C's pricing.
 
-**Next step.** Two weeks of a price-anchored checkout test for new 4–10 seat
-trials: show $8/seat to half. Pass if trial-to-paid in that arm reaches 10% with
-at least 60 trials per arm; otherwise invest in onboarding instead.
+**Next step.** A price-anchored checkout test for new 4–10 seat trials: show
+$8/seat to a random half, the current price to the other half, at the same
+time. Pass if the $8 arm's trial-to-paid is significantly higher than the
+control arm's and reaches about 10%. To detect 6% → 10% with 80% power at
+α = 0.05, each arm needs about 720 trials — with 60 per arm the 95% interval
+around 10% runs from roughly 5% to 20%, so the test could not tell the two
+rates apart. If 4–10 seat trials arrive too slowly to reach that size in a
+quarter, the test cannot answer the question: interview ten stalled trials
+about why they did not convert first. A fail rules out price as the main
+blocker for this segment; onboarding becomes the next candidate to test, not a
+conclusion.
 
 ## What changed
 

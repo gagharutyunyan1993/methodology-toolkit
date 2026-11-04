@@ -1,6 +1,6 @@
 {
   "name": "methodology-toolkit",
-  "description": "Structured decision-making for Claude Code: /method command, methodology-driven-thinking skill with a product-research mode, red-team-critic and evidence-scout subagents over a shared 33-method index.",
+  "description": "Structured decision-making for Claude Code: /method command, methodology-driven-thinking skill with a product-research mode, red-team-critic and evidence-scout subagents, and a hook that checks their reports (needs Node.js), over a shared 33-method index.",
   "owner": {
     "name": "Gagik Harutyunyan",
     "email": "gagik.harutyunyan17@gmail.com"
@@ -9,8 +9,8 @@
     {
       "name": "methodology-toolkit",
       "source": "./plugins/methodology-toolkit",
-      "description": "Structured decision-making: /method command + methodology-driven-thinking skill + red-team-critic and evidence-scout subagents. 33 analytical frameworks applied explicitly, with evidence-gated product research.",
-      "version": "2.0.0"
+      "description": "Structured decision-making: /method command + methodology-driven-thinking skill + red-team-critic and evidence-scout subagents + a report-checking hook. 33 analytical frameworks applied explicitly, with evidence-gated product research.",
+      "version": "2.0.1"
     }
   ]
 }

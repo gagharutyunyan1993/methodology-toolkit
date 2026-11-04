@@ -119,6 +119,11 @@ export function checkText(kind, text) {
   return kind === 'critic' ? checkCritic(report) : checkScout(report);
 }
 
+// Error texts quote values from the report (key names, verdicts, ids, the start of non-JSON text).
+// The subagent needs them to correct its report; the log must not keep them.
+export const redactForLog = (errors) =>
+  errors.map((e) => String(e).replace(/"[^"]*(?:"|$)|'[^']*(?:'|$)/g, '"…"').replace(/\[[^\]]*\]/g, '[]'));
+
 const AGENTS = { 'red-team-critic': 'critic', 'evidence-scout': 'scout' };
 
 // The subagent's final report: `last_assistant_message` when the payload carries it; otherwise the
@@ -189,7 +194,7 @@ async function hookMain() {
       mkdirSync(join(dataDir, 'retries'), { recursive: true });
       if (result.retry) writeFileSync(counter, String(prior + 1));
       else if (counter) rmSync(counter, { force: true }); // the report goes through: this run is done
-      appendFileSync(join(dataDir, 'report-checks.jsonl'), JSON.stringify({ time: new Date().toISOString(), event: payload.hook_event_name, agent: payload.agent_type, attempt: prior + 1, ok: result.errors.length === 0, retry: result.retry, errors: result.errors.slice(0, 20) }) + '\n');
+      appendFileSync(join(dataDir, 'report-checks.jsonl'), JSON.stringify({ time: new Date().toISOString(), event: payload.hook_event_name, agent: payload.agent_type, attempt: prior + 1, ok: result.errors.length === 0, retry: result.retry, errors: redactForLog(result.errors.slice(0, 20)) }) + '\n');
     } catch { /* never fail the session over logging */ }
   }
   if (result.output) process.stdout.write(JSON.stringify(result.output));

@@ -10,7 +10,7 @@ This skill activates structured analytical methods when a task is non-trivial. T
 
 ## Operating Protocol
 
-Method cards live one per file in `${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/references/<slug>.md`; `references/methods.json` lists every slug, its display name and aliases. Nothing is read before Step 3 picks the methods — routing happens from this file.
+Method cards live one per file in `${CLAUDE_PLUGIN_ROOT}/skills/methodology-driven-thinking/references/<slug>.md`; `references/methods.json` lists every slug, its display name and aliases. No card is opened before Step 3 picks the methods (except the Quality of Information Check card when Step 2 needs it) — routing happens from this file.
 
 ### Step 1 — Classify the problem (Cynefin as dispatcher)
 
@@ -173,7 +173,7 @@ Runs when the user asks for product, market, competitor, pricing, or customer re
 
 <example>
 Theater (fails): "Using Porter and SWOT: the market is competitive, rivals have strong brands, our opportunity is AI features." No sources, no dates, prices from memory, methods named but not walked.
-Applied (passes): R1 — the decision is whether to launch a $8/seat tier. R2 — claims: rival A's and rival B's entry price and seat limits; how many target teams already pay for a tool. R3 — pricing pages opened (A: $12/seat, checked 2026-10-02; B: free ≤3 seats, then $10, checked 2026-10-02); 9 of 14 interview notes show a paid workaround. R4 — all Primary and dated; two interview "would pay" quotes discounted as opinion. R5 — JTBD: situation — a lead of 3–8 people preparing a monthly review; job — show progress without hand-built reports; competing solutions — B's free tier, a spreadsheet, a part-time analyst; friction — B's free tier stops at 3 seats, spreadsheets break at month-end → teams of 4–10 sit in a price gap. Assumption Mapping: bet — an $8/seat tier lifts 4–10 seat trial-to-paid from 6% to 10%; beliefs — teams of 4–10 hit B's cap (desirability, Primary), price rather than onboarding blocks conversion (viability, no evidence), we can enforce a seat cap (feasibility, Primary); important × no-evidence → the price belief; kill test — an $8 checkout arm that must reach 10%. Bottom line: test an $8/seat price on 4–10 seat trials before launching the tier.
+Applied (passes): R1 — the decision is whether to launch a $8/seat tier. R2 — claims: rival A's and rival B's entry price and seat limits; how many target teams already pay for a tool. R3 — pricing pages opened (A: $12/seat, checked 2026-10-02; B: free ≤3 seats, then $10, checked 2026-10-02); 9 of 14 interview notes show a paid workaround. R4 — all Primary and dated; two interview "would pay" quotes discounted as opinion. R5 — JTBD: situation — a lead of 3–8 people preparing a monthly review; job — show progress without hand-built reports; competing solutions — B's free tier, a spreadsheet, a part-time analyst; friction — B's free tier stops at 3 seats, spreadsheets break at month-end → teams of 4–10 sit in a price gap. Assumption Mapping: bet — an $8/seat tier lifts 4–10 seat trial-to-paid from 6% to 10%; beliefs — teams of 4–10 hit B's cap (desirability, Primary), price rather than onboarding blocks conversion (viability, no evidence), we can enforce a seat cap (feasibility, Primary); important × no-evidence → the price belief; kill test — an $8 checkout arm against a concurrent current-price arm, sized to detect 6% → 10%. Bottom line: test an $8/seat price on 4–10 seat trials before launching the tier.
 </example>
 
 ## Hard Rules
