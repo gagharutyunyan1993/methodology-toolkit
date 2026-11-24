@@ -2,6 +2,8 @@
 name: red-team-critic
 description: Use when a decision, plan, architecture, hypothesis, strategy or conclusion needs an independent adversarial review before someone commits to it — especially when it is hard to reverse or touches money, auth, data integrity or a public contract. Returns one strict JSON report — confirmed material defects, unverified hypotheses, checks the caller must run, and the limits of the review — not a rewrite or a fix. Invoke for "second opinion", "what could go wrong", "stress test", "devil's advocate", "poke holes in this", "recheck this plan/decision", «перепроверь план / решение», «покритикуй», «речек». Not for re-checking a single fact, a number or a calculation — do that directly.
 tools: Read, Glob, Grep
+model: opus
+effort: medium
 maxTurns: 20
 ---
 
