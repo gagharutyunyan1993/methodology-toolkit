@@ -7,6 +7,18 @@ caveat that Claude Code plugins have no install-time version pinning — a `/plu
 silently pulls the latest. Version numbers here are a declarative boundary, not an
 enforced one. The `v1.0.0` git tag marks the frozen pre-evidence-gate state.
 
+## [2.0.2] — 2026-11-25
+
+### Changed
+- **The subagents name their model and effort.** Without a `model` in the frontmatter a subagent
+  runs on the caller's session model, so parallel evidence scouts started from an Opus or Fable
+  session read the web at that model's rates, and a critic started from a Sonnet session judged
+  on Sonnet. Following Anthropic's model guide ("set `model: haiku` or `model: sonnet` in a
+  subagent's definition"; search and summary work at the model's default effort; judgement calls
+  on the main model): `evidence-scout` runs on `sonnet` at `medium`, `red-team-critic` on `opus`
+  at `medium`. Aliases only, so each follows the newest model. A caller that passes `model` or
+  `effort` on the Agent call still overrides both.
+
 ## [2.0.1] — 2026-11-04
 
 Fixes from a documentation audit: docs brought in line with the v2 rules, one runtime

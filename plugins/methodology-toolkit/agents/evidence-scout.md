@@ -2,6 +2,8 @@
 name: evidence-scout
 description: Use to gather sourced, dated, tier-tagged facts for product, market, competitor, pricing, or customer research before any analysis runs. Give it one narrow scope (one competitor, one question, one market segment) and the list of claims to check; spawn several in parallel for several scopes. Returns one strict JSON evidence report only — no recommendations, no strategy. Invoked by the methodology-driven-thinking skill's Research mode (step R3), or directly when the user asks to "collect the facts", "find sources", "check what competitor X charges", "собери факты", "найди источники".
 tools: Read, Glob, Grep, WebSearch, WebFetch
+model: sonnet
+effort: medium
 maxTurns: 25
 ---
 
